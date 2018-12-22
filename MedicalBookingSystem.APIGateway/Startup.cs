@@ -111,21 +111,21 @@ namespace MedicalBookingSystem.APIGateway
 
 
         }
-        
+
     }
 
     public static class CustomExtensionMethods
     {
         public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = "Endpoint=sb://medicalbookingservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=l547OSCiiTaAEby08Ma79cMLAGSflwNmcbAP8LCkwsg=";
+            var connectionString = "Endpoint=sb://medicalbookingmonitorservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=9j5ZjW9Y/BnphDca2o1nno23PMEhDy+nWJbTtuOz+CU=";
             var queueName = "eventsqueue";
 
             services.AddSingleton<IServiceBusPersisterConnection>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultServiceBusPersisterConnection>>();
 
-                var serviceBusConnection = new ServiceBusConnectionStringBuilder(connectionString);
+                var serviceBusConnection = new ServiceBusConnectionStringBuilder(connectionString, queueName, "RootManageSharedAccessKey");
 
                 return new DefaultServiceBusPersisterConnection(serviceBusConnection, logger);
             });
@@ -135,7 +135,7 @@ namespace MedicalBookingSystem.APIGateway
 
         public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
-            var subscriptionClientName = configuration["SubscriptionClientName"];
+            var queueName = "eventsqueue";
 
             services.AddSingleton<IEventBus, EventBusServiceBus>(sp =>
             {
@@ -145,7 +145,7 @@ namespace MedicalBookingSystem.APIGateway
                 var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
                 return new EventBusServiceBus(serviceBusPersisterConnection, logger,
-                    eventBusSubcriptionsManager, subscriptionClientName, iLifetimeScope);
+                    eventBusSubcriptionsManager, queueName, iLifetimeScope);
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();

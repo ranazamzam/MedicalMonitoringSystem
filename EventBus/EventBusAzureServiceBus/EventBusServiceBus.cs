@@ -23,7 +23,7 @@ namespace EventBus.EventBusAzureServiceBus
         private const string INTEGRATION_EVENT_SUFIX = "IntegrationEvent";
 
         public EventBusServiceBus(IServiceBusPersisterConnection serviceBusPersisterConnection,
-            ILogger<EventBusServiceBus> logger, IEventBusSubscriptionsManager subsManager, string subscriptionClientName,
+            ILogger<EventBusServiceBus> logger, IEventBusSubscriptionsManager subsManager, string queueName,
             ILifetimeScope autofac)
         {
             _serviceBusPersisterConnection = serviceBusPersisterConnection;
