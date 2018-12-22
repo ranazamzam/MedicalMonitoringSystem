@@ -11,13 +11,12 @@ namespace MedicalBookingSystem.APIGateway
     {
         private IHubContext<EventsGeneratorHub, IEventsGeneratorNotification> _hubContext;
 
-        private IHubContext<EventsGeneratorHub> _hubContext1;
         public NotificationService(IHubContext<EventsGeneratorHub, IEventsGeneratorNotification> hubContext)
         {
             _hubContext = hubContext;
         }
 
-        public async Task BroadCastGeneratedEvent(Event generatedEvent)
+        public async Task BroadCastGeneratedEvent(MedicalBookingSystemGeneratedEventIntegrationEvent generatedEvent)
         {
             await _hubContext.Clients.All.ReceiveNewEvent(generatedEvent);
         }

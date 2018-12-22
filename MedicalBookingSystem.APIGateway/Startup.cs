@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Owin;
 using Microsoft.Owin.Cors;
 using Microsoft.Azure.ServiceBus;
-using Newtonsoft.Json;
-using System.Text;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using EventBus.EventBusAzureServiceBus;
+using EventBus.GenericEventBus.Interfaces;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using EventBus.GenericEventBus;
+using SignalR;
 
 namespace MedicalBookingSystem.APIGateway
 {
@@ -35,10 +35,16 @@ namespace MedicalBookingSystem.APIGateway
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddOcelot();
+            services.AddIntegrationServices(Configuration);
+            services.AddEventBus(Configuration);
+
+            var container = new ContainerBuilder();
+            container.Populate(services);
+            return new AutofacServiceProvider(container.Build());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +58,14 @@ namespace MedicalBookingSystem.APIGateway
             app.UseMvc();
             //app.UseCors(CorsOptions.AllowAll);
             app.UseOcelot().Wait();
-            ConfigureSignalR();
+
+            ConfigureEventBus(app);
+        }
+
+        protected virtual void ConfigureEventBus(IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            eventBus.Subscribe<MedicalBookingSystemGeneratedEventIntegrationEvent, MedicalBookingSystemGeneratedEventIntegrationEventHandler>();
         }
 
         private static void ConfigureCors(IAppBuilder app)
@@ -60,64 +73,85 @@ namespace MedicalBookingSystem.APIGateway
             app.UseCors(CorsOptions.AllowAll);
         }
 
+
+
         private static void ConfigureSignalR()
         {
-            //app.UseAesDataProtectorProvider(SignalRHostConfiguration.EncryptionPassword);
-
-            //if (SignalRHostConfiguration.UseScaleout)
-            //{
-            //    var serviceBusConfig = new ServiceBusScaleoutConfiguration(SignalRHostConfiguration.ServiceBusConnectionString,
-            //        SignalRHostConfiguration.ServiceBusBackplaneTopic);
-
-            //    GlobalHost.DependencyResolver.UseServiceBus(serviceBusConfig);
-            //    app.MapSignalR();
-            //}
-
             //var configuration = new HubConfiguration { EnableDetailedErrors = true, EnableJavaScriptProxies = false };
             //app.MapSignalR(configuration);
 
+            //var connectionString = "Endpoint=sb://medicalbookingservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=l547OSCiiTaAEby08Ma79cMLAGSflwNmcbAP8LCkwsg=";
+            //var queueName = "eventsqueue";
+
+            //var queueClient = new QueueClient(connectionString, queueName);
+
+            //var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+            //{
+            //    // Maximum number of Concurrent calls to the callback `ProcessMessagesAsync`, set to 1 for simplicity.
+            //    // Set it according to how many messages the application wants to process in parallel.
+            //    MaxConcurrentCalls = 1,
+
+            //    // Indicates whether MessagePump should automatically complete the messages after returning from User Callback.
+            //    // False below indicates the Complete will be handled by the User Callback as in `ProcessMessagesAsync` below.
+            //    AutoComplete = false
+            //};
+
+            //// Register the function that will process messages
+            //// Register the function that will process messages
+            //queueClient.RegisterMessageHandler(async (message, token) =>
+            //{
+            //    // Process the message
+            //    var t = message.SystemProperties.SequenceNumber;
+            //    //  var customer = JsonConvert.DeserializeObject<Event>(Encoding.UTF8.GetString(message.Body));
+            //    //reList.Add(message.GetBody<string>());
+            //    // Complete the message so that it is not received again.
+            //    // This can be done only if the queueClient is opened in ReceiveMode.PeekLock mode.
+            //    await queueClient.CompleteAsync(message.SystemProperties.LockToken);
+            //}, messageHandlerOptions);
+
+
+        }
+        
+    }
+
+    public static class CustomExtensionMethods
+    {
+        public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
+        {
             var connectionString = "Endpoint=sb://medicalbookingservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=l547OSCiiTaAEby08Ma79cMLAGSflwNmcbAP8LCkwsg=";
             var queueName = "eventsqueue";
 
-            var queueClient = new QueueClient(connectionString, queueName);
-
-            var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
+            services.AddSingleton<IServiceBusPersisterConnection>(sp =>
             {
-                // Maximum number of Concurrent calls to the callback `ProcessMessagesAsync`, set to 1 for simplicity.
-                // Set it according to how many messages the application wants to process in parallel.
-                MaxConcurrentCalls = 1,
+                var logger = sp.GetRequiredService<ILogger<DefaultServiceBusPersisterConnection>>();
 
-                // Indicates whether MessagePump should automatically complete the messages after returning from User Callback.
-                // False below indicates the Complete will be handled by the User Callback as in `ProcessMessagesAsync` below.
-                AutoComplete = false
-            };
+                var serviceBusConnection = new ServiceBusConnectionStringBuilder(connectionString);
 
-            // Register the function that will process messages
-            // Register the function that will process messages
-            queueClient.RegisterMessageHandler(async (message, token) =>
-            {
-                // Process the message
-                var t = message.SystemProperties.SequenceNumber;
-              //  var customer = JsonConvert.DeserializeObject<Event>(Encoding.UTF8.GetString(message.Body));
-                //reList.Add(message.GetBody<string>());
-                // Complete the message so that it is not received again.
-                // This can be done only if the queueClient is opened in ReceiveMode.PeekLock mode.
-                await queueClient.CompleteAsync(message.SystemProperties.LockToken);
-            }, messageHandlerOptions);
+                return new DefaultServiceBusPersisterConnection(serviceBusConnection, logger);
+            });
 
-
+            return services;
         }
 
-        static Task ExceptionReceivedHandler(ExceptionReceivedEventArgs exceptionReceivedEventArgs)
+        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
-            Console.WriteLine($"Message handler encountered an exception {exceptionReceivedEventArgs.Exception}.");
-            var context = exceptionReceivedEventArgs.ExceptionReceivedContext;
-            Console.WriteLine("Exception context for troubleshooting:");
-            Console.WriteLine($"- Endpoint: {context.Endpoint}");
-            Console.WriteLine($"- Entity Path: {context.EntityPath}");
-            Console.WriteLine($"- Executing Action: {context.Action}");
-            return Task.CompletedTask;
-        }
+            var subscriptionClientName = configuration["SubscriptionClientName"];
 
+            services.AddSingleton<IEventBus, EventBusServiceBus>(sp =>
+            {
+                var serviceBusPersisterConnection = sp.GetRequiredService<IServiceBusPersisterConnection>();
+                var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
+                var logger = sp.GetRequiredService<ILogger<EventBusServiceBus>>();
+                var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+
+                return new EventBusServiceBus(serviceBusPersisterConnection, logger,
+                    eventBusSubcriptionsManager, subscriptionClientName, iLifetimeScope);
+            });
+
+            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+            services.AddTransient<MedicalBookingSystemGeneratedEventIntegrationEventHandler>();
+
+            return services;
+        }
     }
 }

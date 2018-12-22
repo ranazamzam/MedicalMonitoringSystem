@@ -1,10 +1,11 @@
-﻿using System;
+﻿using EventBus.GenericEventBus.Events;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SignalR
 {
-    public class Event
+    public class MedicalBookingSystemGeneratedEventIntegrationEvent : IntegrationEvent
     {
         public string PartitionKey { get; set; }
 

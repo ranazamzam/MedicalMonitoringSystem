@@ -8,6 +8,6 @@ namespace MedicalBookingSystem.APIGateway
 {
     public interface INotificationService
     {
-        Task BroadCastGeneratedEvent(Event generatedEvent);
+        Task BroadCastGeneratedEvent(MedicalBookingSystemGeneratedEventIntegrationEvent generatedEvent);
     }
 }
