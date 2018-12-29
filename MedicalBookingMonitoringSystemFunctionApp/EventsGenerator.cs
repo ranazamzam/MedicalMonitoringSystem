@@ -22,12 +22,13 @@ namespace MedicalBookingMonitoringSystemFunctionApp
             var generatedEvent = new Event
             {
                 RowKey = rowId.ToString(),
-                PartitionKey = "GenralEvents",
+                PartitionKey = "GeneralEvents",
                 EventId = rowId,
                 PatientId = 1,
                 DoctorId = 1,
                 EventDate = DateTime.Now,
-                EventType = "login"
+                EventType = "login",
+                Label = "MedicalBookingSystemGeneratedEvent",
             };
 
              eventQueueItem.Add(generatedEvent);
@@ -48,5 +49,8 @@ namespace MedicalBookingMonitoringSystemFunctionApp
         public DateTime EventDate { get; set; }
 
         public string EventType { get; set; }
+
+        // Thi is used for being able to get the event name to handle the message when consuming it
+        public string Label { get; set; }
     }
 }

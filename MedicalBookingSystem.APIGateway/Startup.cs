@@ -37,10 +37,21 @@ namespace MedicalBookingSystem.APIGateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
+            services.AddSingleton<INotificationService, NotificationService>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddOcelot();
             services.AddIntegrationServices(Configuration);
             services.AddEventBus(Configuration);
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
             var container = new ContainerBuilder();
             container.Populate(services);
@@ -54,6 +65,14 @@ namespace MedicalBookingSystem.APIGateway
             {
                 app.UseDeveloperExceptionPage();
             }
+
+
+            app.UseCors("CorsPolicy");
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<EventsGeneratorHub>("/eventsGenerator");
+            });
+
 
             app.UseMvc();
             //app.UseCors(CorsOptions.AllowAll);
@@ -124,8 +143,9 @@ namespace MedicalBookingSystem.APIGateway
             services.AddSingleton<IServiceBusPersisterConnection>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultServiceBusPersisterConnection>>();
+                var serviceBusConnectionStringBuilder = new ServiceBusConnectionStringBuilder(connectionString);
 
-                var serviceBusConnection = new ServiceBusConnectionStringBuilder(connectionString, queueName, "RootManageSharedAccessKey");
+                var serviceBusConnection = new ServiceBusConnectionStringBuilder(serviceBusConnectionStringBuilder.Endpoint, queueName, serviceBusConnectionStringBuilder.SasKeyName, serviceBusConnectionStringBuilder.SasKey);
 
                 return new DefaultServiceBusPersisterConnection(serviceBusConnection, logger);
             });
@@ -145,7 +165,7 @@ namespace MedicalBookingSystem.APIGateway
                 var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
                 return new EventBusServiceBus(serviceBusPersisterConnection, logger,
-                    eventBusSubcriptionsManager, queueName, iLifetimeScope);
+                                              eventBusSubcriptionsManager, queueName, iLifetimeScope);
             });
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();

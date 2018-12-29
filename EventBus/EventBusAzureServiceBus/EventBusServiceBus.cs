@@ -33,7 +33,7 @@ namespace EventBus.EventBusAzureServiceBus
             _subscriptionClient = new QueueClient(serviceBusPersisterConnection.ServiceBusConnectionStringBuilder);
             _autofac = autofac;
 
-            RemoveDefaultRule();
+            //RemoveDefaultRule();
             RegisterSubscriptionClientMessageHandler();
         }
 
@@ -126,8 +126,8 @@ namespace EventBus.EventBusAzureServiceBus
             _subscriptionClient.RegisterMessageHandler(
                 async (message, token) =>
                 {
-                    var eventName = $"{message.Label}{INTEGRATION_EVENT_SUFIX}";
                     var messageData = Encoding.UTF8.GetString(message.Body);
+                    var eventName = $"MedicalBookingSystemGeneratedEvent{INTEGRATION_EVENT_SUFIX}";
 
                     // Complete the message so that it is not received again.
                     if (await ProcessEvent(eventName, messageData))
