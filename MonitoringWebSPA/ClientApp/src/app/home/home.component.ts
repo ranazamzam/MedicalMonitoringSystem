@@ -12,6 +12,7 @@ export class HomeComponent implements OnInit {
  
   private _hubConnection: HubConnection | undefined;
   public async: any;
+  p: number = 1;
   generatedEvents: any[] = [];
 
   ngOnInit() {
