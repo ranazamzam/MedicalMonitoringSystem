@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using Microsoft.Azure.WebJobs.Host;
@@ -12,69 +13,60 @@ namespace MedicalBookingMonitoringSystemFunctionApp
     public static class AppointmentsConflictsDetector
     {
         [FunctionName("Function1")]
-        public static Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer,
+        public static async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer,
             [Table("EventsTable")] CloudTable currentEvents,
-            [SignalR(HubName = "broadcastConflicts")] IAsyncCollector<SignalRMessage> signalRMessages,ILogger log)
+            [SignalR(HubName = "broadcastConflicts")] IAsyncCollector<SignalRMessage> signalRMessages, ILogger log)
         {
-            var rowId = Guid.NewGuid();
-            var generatedEvent = new Event
-            {
-                RowKey = rowId.ToString(),
-                PartitionKey = "GeneralEvents",
-                EventId = rowId,
-                PatientId = 1,
-                DoctorId = 1,
-                EventDate = DateTime.Now,
-                EventType = "login",
-                Label = "MedicalBookingSystemGeneratedEvent",
-            };
-
-            
-            var generatedEvent1 = new Event
-            {
-                RowKey = rowId.ToString(),
-                PartitionKey = "GeneralEvents",
-                EventId = rowId,
-                PatientId = 2,
-                DoctorId = 1,
-                EventDate = DateTime.Now,
-                EventType = "login",
-                Label = "MedicalBookingSystemGeneratedEvent",
-            };
-
-            var rowId1 = Guid.NewGuid();
-            var generatedEvent2 = new Event
-            {
-                RowKey = rowId1.ToString(),
-                PartitionKey = "GeneralEvents",
-                EventId = rowId,
-                PatientId = 1,
-                DoctorId = 1,
-                EventDate = DateTime.Now,
-                EventType = "login",
-                Label = "MedicalBookingSystemGeneratedEvent",
-            };
-
-
-            var generatedEvent3 = new Event
-            {
-                RowKey = rowId1.ToString(),
-                PartitionKey = "GeneralEvents",
-                EventId = rowId,
-                PatientId = 2,
-                DoctorId = 1,
-                EventDate = DateTime.Now,
-                EventType = "login",
-                Label = "MedicalBookingSystemGeneratedEvent",
-            };
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
-            return signalRMessages.AddAsync(
-                new SignalRMessage
+            DateTimeOffset dateTimeOffset = DateTimeOffset.Now.AddMinutes(-5);
+            var partitionFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "BookingAppointmentEvent");
+            var IsConflictedFilter = TableQuery.GenerateFilterConditionForBool("IsConflicted", QueryComparisons.Equal, true);
+            var IsConflictShownFilter = TableQuery.GenerateFilterConditionForBool("IsConflictShown", QueryComparisons.Equal, false);
+            var dateFilter = TableQuery.GenerateFilterConditionForDate("EventDate", QueryComparisons.LessThanOrEqual, dateTimeOffset);
+
+            var filter = TableQuery.CombineFilters(
+                           dateFilter,
+                           TableOperators.And,
+                           TableQuery.CombineFilters(
+                                TableQuery.CombineFilters(partitionFilter, TableOperators.And, IsConflictedFilter),
+                                TableOperators.And, IsConflictShownFilter));
+
+            TableQuery<Event> rangeQuery = new TableQuery<Event>().Where(filter);
+
+            List<AppointmentEvent> appointmentEventsWithConflicts = new List<AppointmentEvent>();
+
+            var conflictedEvents = await currentEvents.ExecuteQuerySegmentedAsync(rangeQuery, null);
+
+            foreach (var conflictedEvent in conflictedEvents)
+            {
+                log.LogInformation($"{conflictedEvent.PartitionKey}\t{conflictedEvent.RowKey}\t{conflictedEvent.Timestamp}\t{conflictedEvent.EventId}");
+
+                var originalAppointmentEvent = appointmentEventsWithConflicts.Find(x => x.EventId == conflictedEvent.OriginalEventId);
+
+
+                if (originalAppointmentEvent != null)
                 {
-                    Target = "appointmentConflictDetected",
-                    Arguments = new[] { new List<Event> { generatedEvent, generatedEvent1, generatedEvent2, generatedEvent3 } }
-                });
+                    originalAppointmentEvent.ConflictedEvents.Add(conflictedEvent);
+                }
+                else
+                {
+                    appointmentEventsWithConflicts.Add(new AppointmentEvent()
+                    {
+                        EventId = conflictedEvent.OriginalEventId,
+                        ConflictedEvents = new List<Event>() { conflictedEvent }
+                    });
+                }
+
+                conflictedEvent.IsConflictShown = true;
+                await currentEvents.ExecuteAsync(TableOperation.Replace(conflictedEvent));
+            }
+
+            await signalRMessages.AddAsync(new SignalRMessage
+            {
+                Target = "appointmentConflictDetected",
+                Arguments = new[] { appointmentEventsWithConflicts }
+            });
         }
     }
 }

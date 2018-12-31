@@ -25,7 +25,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let event of generatedEvents | paginate: { itemsPerPage: 2, currentPage: p }">
+      <tr *ngFor="let event of generatedEvents | paginate: {id: 'generatedEventsPaging', itemsPerPage: 2, currentPage: p }">
         <td>{{event.patientId}}</td>
         <td>{{event.doctorId}}</td>
         <td>{{event.eventDate}}</td>
@@ -34,7 +34,7 @@
     </tbody>
   </table>
 
-  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  <pagination-controls id="generatedEventsPaging" (pageChange)="p = $event"></pagination-controls>
 </div>
 
 <app-conflict-display></app-conflict-display>

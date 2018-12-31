@@ -6,6 +6,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
+using System.Collections.Generic;
 
 namespace MedicalBookingMonitoringSystemFunctionApp
 {
@@ -22,7 +23,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
             var generatedEvent = new Event
             {
                 RowKey = rowId.ToString(),
-                PartitionKey = "GeneralEvents",
+                PartitionKey = "BookingAppointmentEvent",
                 EventId = rowId,
                 PatientId = 1,
                 DoctorId = 1,
@@ -30,11 +31,43 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                 EventType = "login",
                 Label = "MedicalBookingSystemGeneratedEvent",
             };
+            rowId = Guid.NewGuid();
+            var generatedEvent1 = new Event
+            {
+                RowKey = rowId.ToString(),
+                PartitionKey = "BookingAppointmentEvent",
+                EventId = rowId,
+                PatientId = 1,
+                DoctorId = 1,
+                EventDate = DateTime.Now,
+                EventType = "login",
+                Label = "MedicalBookingSystemGeneratedEvent",
+                IsConflicted = true,
+                IsConflictShown = false,
+                OriginalEventId = generatedEvent.EventId
+            };
+            rowId = Guid.NewGuid();
+            var generatedEvent2 = new Event
+            {
+                RowKey = rowId.ToString(),
+                PartitionKey = "BookingAppointmentEvent",
+                EventId = rowId,
+                PatientId = 1,
+                DoctorId = 1,
+                EventDate = DateTime.Now,
+                EventType = "login",
+                Label = "MedicalBookingSystemGeneratedEvent",
+                IsConflicted = true,
+                IsConflictShown = false,
+                OriginalEventId = generatedEvent.EventId
+            };
 
-             eventQueueItem.Add(generatedEvent);
+            eventQueueItem.Add(generatedEvent);
 
              newEvents.Add(generatedEvent);
-          //  return (ActionResult)new OkObjectResult($"Ok");
+            newEvents.Add(generatedEvent1);
+            newEvents.Add(generatedEvent2);
+            //  return (ActionResult)new OkObjectResult($"Ok");
         }
     }
 
@@ -52,5 +85,17 @@ namespace MedicalBookingMonitoringSystemFunctionApp
 
         // Thi is used for being able to get the event name to handle the message when consuming it
         public string Label { get; set; }
+
+        public bool IsConflicted { get; set; }
+
+        public bool IsConflictShown { get; set; }
+
+        // In case of conflict, this property will contain the Id of the original event
+        public Guid OriginalEventId { get; set; }
+    }
+
+    public class AppointmentEvent : Event
+    {
+        public List<Event> ConflictedEvents { get; set; }
     }
 }

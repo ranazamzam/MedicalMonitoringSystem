@@ -1,3 +1,47 @@
 <p>
-  conflict-display works!
+  The data below displays the conflicted appointments,
+  It dislays the original appointment along with the apppointments that conflicted with it
 </p>
+<div class="row show-grid">
+  <div *ngFor="let originalEvent of appointmentEventsWithConflicts | paginate: {id: 'conflictedEventsPaging', itemsPerPage: 2, currentPage: p };let i = index" class="col-md-9">
+    Original Appointment Id :{{originalEvent.EventId}}
+    <button (click)="toggle[i] = !toggle[i]">Check Conflicted Appointments</button>
+    <div *ngIf="originalEvent.ConflictedEvents && toggle[i]">
+      <div class="row show-grid">
+        <div class="col-md-6">
+          Appointment Id
+        </div>
+        <div class="col-md-6">
+          Appointment Date
+        </div>
+      </div>
+      <div *ngFor="let conflictedEvent of originalEvent.ConflictedEvents" class="row show-grid">
+        <div class="col-md-6">
+          {{conflictedEvent.EventId}}
+        </div>
+        <div class="col-md-6">
+          {{conflictedEvent.EventDate}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--<table class="table table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Appointment Id</th>
+      <th>Appointment Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let originalEvent of appointmentEventsWithConflicts">
+      <td>{{originalEvent.EventId}}</td>
+    <tr>
+    <tr></tr>
+  </tbody>
+</table>-->
+
+<pagination-controls id="conflictedEventsPaging" (pageChange)="p = $event"></pagination-controls>

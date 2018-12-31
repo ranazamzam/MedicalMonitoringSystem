@@ -17,10 +17,13 @@ export class ConflictDisplayComponent implements OnInit {
   private readonly _http: HttpClient;
   private readonly _baseUrl: string = "http://localhost:7071/api/";
   private hubConnection: HubConnection;
-  appointmentEvents: AppointmentEvent[] = [];
+  appointmentEventsWithConflicts: AppointmentEvent[] = [];
+  p: number = 1;
+  toggle: any = {};
 
   constructor(http: HttpClient) {
     this._http = http;
+    this.toggle = this.appointmentEventsWithConflicts.map(i => false);
   }
 
   private getConnectionInfo(): Observable<SignalRConnectionInfo> {
@@ -45,15 +48,15 @@ export class ConflictDisplayComponent implements OnInit {
 
       this.hubConnection.start().catch(err => console.error(err.toString()));
 
-      this.hubConnection.on('appointmentConflictDetected', (data: Event[]) => {
+      this.hubConnection.on('appointmentConflictDetected', (data: AppointmentEvent[]) => {
         debugger;
-
+        this.appointmentEventsWithConflicts= this.appointmentEventsWithConflicts.concat(data);
         // loop on the incoming conflicted events list and group it by the original event reference number
-        data.forEach(function (item) {
+        //data.forEach(function (item) {
 
-          this.appointmentEvents[item.eventId] = this.appointmentEvents[item.eventId] || [];
-          this.appointmentEvents[item.eventId].conflictedEvents.push({ item });
-        });
+        //  this.appointmentEvents[item.eventId] = this.appointmentEvents[item.eventId] || [];
+        //  this.appointmentEvents[item.eventId].conflictedEvents.push({ item });
+        //});
 
       });
     });
