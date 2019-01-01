@@ -28,14 +28,5 @@ namespace MedicalBookingSystem.APIGateway
             // Notify connected clients of the new events
             await _notificationService.BroadCastGeneratedEvent(@event);
         }
-
-        //public async Task HandleNewEventGeneratedEvent(Message message)
-        //{
-        //    // Process the message
-        //    var t = message.SystemProperties.SequenceNumber;
-        //    var generatedEvent = JsonConvert.DeserializeObject<Event>(Encoding.UTF8.GetString(message.Body));
-
-
-        //}
     }
 }
