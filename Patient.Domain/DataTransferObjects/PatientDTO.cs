@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Patient.Domain.Models
+namespace Patient.Domain.DataTransferObjects
 {
-    public class PatientEntity
+    public class PatientDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Address { get; set; }
     }
 }

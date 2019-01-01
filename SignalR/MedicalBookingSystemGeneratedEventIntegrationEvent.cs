@@ -20,5 +20,12 @@ namespace SignalR
         public DateTime EventDate { get; set; }
 
         public string EventType { get; set; }
+
+        public bool IsConflicted { get; set; }
+
+        public bool IsConflictShown { get; set; }
+
+        // In case of conflict, this property will contain the Id of the original event
+        public Guid OriginalEventId { get; set; }
     }
 }

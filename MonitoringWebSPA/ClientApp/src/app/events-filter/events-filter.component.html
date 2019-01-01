@@ -1,0 +1,16 @@
+<div class="form-group">
+  <div class="col-sm-10" style="margin-bottom:10px">
+    <div class="dropdown">
+      <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">Action <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <li *ngFor="let patient of patients" (click)="patientFilterChanged(patient)"><a href="#">{{patient.name}}</a></li>
+        <li><a href="#">Another action</a></li>
+        <li><a href="#">Something else here</a></li>
+        <li class="divider"></li>
+        <li><a href="#">Separated link</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+

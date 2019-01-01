@@ -1,8 +1,8 @@
 export class Event {
-  eventId: string;
-  patientId: number;
-  doctorId: number;
-  eventDate: Date;
-  eventType: number;
+  EventId: string;
+  PatientId: number;
+  DoctorId: number;
+  EventDate: Date;
+  EventType: number;
 }
 

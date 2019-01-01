@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,8 @@ namespace Patient.Domain.Interfaces
         /// Gets All Entities
         /// </summary>
         IEnumerable<T> GetAll { get; }
+
+        List<TOut> GetAllWithSelect<TOut>(Expression<Func<T, TOut>> @select);
 
         /// <summary>
         /// Get entity by identifier

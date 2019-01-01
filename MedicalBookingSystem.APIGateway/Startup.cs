@@ -89,10 +89,8 @@ namespace MedicalBookingSystem.APIGateway
 
         private static void ConfigureCors(IAppBuilder app)
         {
-            app.UseCors(CorsOptions.AllowAll);
+            //app.UseCors(CorsOptions.AllowAll);
         }
-
-
 
         private static void ConfigureSignalR()
         {

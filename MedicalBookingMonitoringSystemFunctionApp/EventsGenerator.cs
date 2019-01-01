@@ -30,6 +30,8 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                 EventDate = DateTime.Now,
                 EventType = "login",
                 Label = "MedicalBookingSystemGeneratedEvent",
+                IsConflicted = false,
+                IsConflictShown = false,
             };
             rowId = Guid.NewGuid();
             var generatedEvent1 = new Event
@@ -37,7 +39,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                 RowKey = rowId.ToString(),
                 PartitionKey = "BookingAppointmentEvent",
                 EventId = rowId,
-                PatientId = 1,
+                PatientId = 2,
                 DoctorId = 1,
                 EventDate = DateTime.Now,
                 EventType = "login",
@@ -52,7 +54,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                 RowKey = rowId.ToString(),
                 PartitionKey = "BookingAppointmentEvent",
                 EventId = rowId,
-                PatientId = 1,
+                PatientId = 3,
                 DoctorId = 1,
                 EventDate = DateTime.Now,
                 EventType = "login",
@@ -63,8 +65,10 @@ namespace MedicalBookingMonitoringSystemFunctionApp
             };
 
             eventQueueItem.Add(generatedEvent);
+            eventQueueItem.Add(generatedEvent1);
+            eventQueueItem.Add(generatedEvent2);
 
-             newEvents.Add(generatedEvent);
+            newEvents.Add(generatedEvent);
             newEvents.Add(generatedEvent1);
             newEvents.Add(generatedEvent2);
             //  return (ActionResult)new OkObjectResult($"Ok");

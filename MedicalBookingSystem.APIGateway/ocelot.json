@@ -1,8 +1,17 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/api/Patient/19860813-XXXX",
+      "DownstreamPathTemplate": "/api/Patient/1",
       "UpstreamPathTemplate": "/EquipmentInterfaces",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "http",
+      "ServiceName": "MedicalBookingSystem/MedicalBookingSystem.Patient"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Patient/Patients",
+      "UpstreamPathTemplate": "/Patients",
       "UpstreamHttpMethod": [
         "Get"
       ],

@@ -13,28 +13,36 @@
 </ul>
 <p>The <code>ClientApp</code> subdirectory is a standard Angular CLI application. If you open a command prompt in that directory, you can run any <code>ng</code> command (e.g., <code>ng test</code>), or use <code>npm</code> to install extra packages into it.</p>-->
 
+<app-events-filter [patients]="patients" (onFilterValueChanged)="applyFilter($event)"></app-events-filter>
+
 <div class="ibox-content">
 
   <table class="table table-striped">
     <thead>
       <tr>
+        <th></th>
         <th>Patient Name</th>
         <th>Doctor Name</th>
         <th>Event Date</th>
         <th>Event Type</th>
+        <th>Conflicted Appointment</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let event of generatedEvents | paginate: {id: 'generatedEventsPaging', itemsPerPage: 2, currentPage: p }">
+      <tr *ngFor="let event of filteredGeneratedEvents | paginate: {id: 'generatedEventsPaging', itemsPerPage: 2, currentPage: p }">
+        <td>{{event.eventId}}</td>
         <td>{{event.patientId}}</td>
         <td>{{event.doctorId}}</td>
         <td>{{event.eventDate}}</td>
         <td>{{event.eventType}}</td>
+        <td><span *ngIf="event.isConflictShown" style="color:red">Conflict</span></td>
       </tr>
     </tbody>
   </table>
 
-  <pagination-controls id="generatedEventsPaging" (pageChange)="p = $event"></pagination-controls>
+  <div>
+    <pagination-controls id="generatedEventsPaging" (pageChange)="p = $event"></pagination-controls>
+  </div>
 </div>
 
 <app-conflict-display></app-conflict-display>

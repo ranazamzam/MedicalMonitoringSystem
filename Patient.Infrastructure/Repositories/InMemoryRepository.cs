@@ -1,4 +1,5 @@
-﻿using Patient.Domain.Interfaces;
+﻿using Patient.Domain.DataTransferObjects;
+using Patient.Domain.Interfaces;
 using Patient.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -21,17 +22,17 @@ namespace Patient.Infrastructure.Repositories
             {
                 new PatientEntity
                 {
-                    Id="19860813-XXXX",
+                    Id=1,
                     Name="Henrik Karlsson"
                 },
                 new PatientEntity
                 {
-                    Id="19750612-XXXX",
+                    Id=2,
                     Name="Erik Henriksson"
                 },
                 new PatientEntity
                 {
-                    Id="19600519-XXXX",
+                    Id=3,
                     Name="Cecilia Eliasson"
                 },
             });
@@ -49,6 +50,10 @@ namespace Patient.Infrastructure.Repositories
             }
         }
 
+        public List<TOut> GetAllWithSelect<TOut>(Expression<Func<PatientEntity, TOut>> select)
+        {
+            throw new NotImplementedException();
+        }
 
         public void BulkInsert(List<PatientEntity> rows, string tableName)
         {
@@ -167,7 +172,7 @@ namespace Patient.Infrastructure.Repositories
 
         public Task<PatientEntity> GetByIdAsync(params object[] id)
         {
-            return Task.FromResult(_patients.FirstOrDefault(x => x.Id == id[0].ToString()));
+            return Task.FromResult(_patients.FirstOrDefault(x => x.Id == int.Parse(id[0].ToString())));
         }
 
         public void HardDelete(PatientEntity entity)

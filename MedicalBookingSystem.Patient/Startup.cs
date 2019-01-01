@@ -53,7 +53,7 @@ namespace MedicalBookingSystem.Patient
                 app.UseDeveloperExceptionPage();
             }
 
-
+            app.UseCors("CorsPolicy");
             app.UseMvc();
         }
     }

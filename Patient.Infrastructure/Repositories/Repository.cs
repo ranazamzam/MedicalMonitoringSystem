@@ -193,7 +193,7 @@ namespace Patient.Infrastructure.Repositories
             }
 
             _context.Entry(entity).State = EntityState.Modified;
-            
+
         }
 
         /// <summary>
@@ -207,6 +207,11 @@ namespace Patient.Infrastructure.Repositories
             }
         }
 
+
+        public virtual List<TOut> GetAllWithSelect<TOut>(Expression<Func<T, TOut>> @select)
+        {
+            return DbSet.Select(@select).ToList();
+        }
         /// <summary>
         /// Gets All Entities with "no tracking" enabled (EF feature) Use it only when you load record(s) only for read-only operations
         /// </summary>
@@ -428,7 +433,7 @@ namespace Patient.Infrastructure.Repositories
         public virtual T GetById(params object[] id)
         {
             var item = DbSet.Find(id);
-            
+
             return item;
         }
 
@@ -467,7 +472,7 @@ namespace Patient.Infrastructure.Repositories
             GC.SuppressFinalize(this);
         }
         #endregion
-        
+
         #region Helpers
         /// <summary>
         /// Returns primary key column and values for an entity.

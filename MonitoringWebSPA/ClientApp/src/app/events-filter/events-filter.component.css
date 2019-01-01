@@ -46,6 +46,10 @@ h5 {
   font-weight: 600;
 }
 
+.open > .dropdown-menu {
+  display: block;
+}
+
 .nav > li > a {
   color: #a7b1c2;
   font-weight: 600;
@@ -2026,7 +2030,7 @@ div.dt-button-info {
   padding-top: 10px;
   padding-bottom: 10px;
   border: 1px solid #ddd;
-  background-color: #eee !important;
+  background-color: #b3681a !important;
 }
 
 .show-grid {
@@ -4685,7 +4689,7 @@ code {
 .ibox-content {
   background-color: #ffffff;
   color: inherit;
-  /*padding: 15px 20px 20px 20px;*/
+  padding: 15px 20px 20px 20px;
   border-color: #e7eaec;
   border-image: none;
   border-style: solid solid none;
@@ -8330,7 +8334,7 @@ body.landing-page {
     width: 100%;
   }
 
-    /*.landing-page .header-back.one {
+  /*.landing-page .header-back.one {
       background: url('../img/landing/header_one.jpg') 50% 0 no-repeat;
     }
 

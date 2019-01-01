@@ -1,4 +1,5 @@
-﻿using Patient.Domain.Interfaces;
+﻿using Patient.Domain.DataTransferObjects;
+using Patient.Domain.Interfaces;
 using Patient.Domain.Models;
 using Patient.Services.Interfaces;
 using System;
@@ -30,15 +31,25 @@ namespace Patient.Services.Services
             _unitOfWork.Dispose();
         }
 
-        public List<PatientEntity> GetAllPatients()
+        public List<PatientDTO> GetAllPatients()
         {
-            return _patientRepository.GetAll.ToList();
-           // return _unitOfWork.Repository<Domain.Models.Patient>().GetAllNoTracking.ToList();
+            var patients = _patientRepository.GetAll;
+            var patientsDTO = patients.Select(x => new PatientDTO()
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
+
+            patientsDTO.Insert(0, new PatientDTO { Id = -1, Name = "All" });
+
+            return patientsDTO;
+            // return _unitOfWork.Repository<Domain.Models.Patient>().GetAllNoTracking.ToList();
         }
 
-        public Task<PatientEntity> GetPatientById(string id)
+        public Task<PatientEntity> GetPatientById(int id)
         {
             return _patientRepository.GetByIdAsync(id);
+
             //return Task.FromResult(_unitOfWork.Repository<Domain.Models.Patient>().GetById(id));
         }
     }

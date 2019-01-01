@@ -11,6 +11,10 @@ import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { ConflictDisplayComponent } from './conflict-display/conflict-display.component';
+import { EventsFilterComponent } from './events-filter/events-filter.component';
+
+import { AzureSignalRService } from './azure-signal-r.service';
+import { EventDisplayService } from './event-display.service';
 
 @NgModule({
   declarations: [
@@ -19,7 +23,8 @@ import { ConflictDisplayComponent } from './conflict-display/conflict-display.co
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    ConflictDisplayComponent
+    ConflictDisplayComponent,
+    EventsFilterComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -32,7 +37,7 @@ import { ConflictDisplayComponent } from './conflict-display/conflict-display.co
     ]),
     NgxPaginationModule
   ],
-  providers: [],
+  providers: [AzureSignalRService, EventDisplayService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
