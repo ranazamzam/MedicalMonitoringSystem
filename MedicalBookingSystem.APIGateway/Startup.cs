@@ -16,6 +16,8 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using EventBus.GenericEventBus;
 using SignalR;
+using MedicalBookingSystem.APIGateway.Aggregator.Interfaces;
+using MedicalBookingSystem.APIGateway.Aggregator;
 
 namespace MedicalBookingSystem.APIGateway
 {
@@ -38,7 +40,8 @@ namespace MedicalBookingSystem.APIGateway
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR();
-            services.AddSingleton<INotificationService, NotificationService>();
+            services.AddTransient<INotificationService, NotificationService>();
+            services.AddTransient<IPatientService, PatientService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddOcelot();

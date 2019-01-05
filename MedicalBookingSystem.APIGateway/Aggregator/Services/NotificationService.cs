@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using MedicalBookingSystem.APIGateway.Aggregator.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MedicalBookingSystem.APIGateway
+namespace MedicalBookingSystem.APIGateway.Aggregator
 {
     public class NotificationService : INotificationService
     {

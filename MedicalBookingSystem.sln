@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommonLibraries", "CommonLi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "EventBus\EventBus.csproj", "{0E2733F4-7385-4BB8-9FB3-6CA7DCAFA89F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patient.Services.Tests", "Patient.Services.Tests\Patient.Services.Tests.csproj", "{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,14 @@ Global
 		{0E2733F4-7385-4BB8-9FB3-6CA7DCAFA89F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0E2733F4-7385-4BB8-9FB3-6CA7DCAFA89F}.Release|x64.ActiveCfg = Release|Any CPU
 		{0E2733F4-7385-4BB8-9FB3-6CA7DCAFA89F}.Release|x64.Build.0 = Release|Any CPU
+		{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D}.Debug|x64.Build.0 = Debug|Any CPU
+		{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D}.Release|x64.ActiveCfg = Release|Any CPU
+		{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,6 +163,7 @@ Global
 		{CBAA662D-13E9-4E3E-A014-ADC831D7AF15} = {28AF28DF-BC01-4489-BF98-A175CEC85719}
 		{4721BBA9-CC68-4D8F-AE6C-C4786BB5C232} = {E6DB0B15-B768-4153-82DD-CDE317CD4A85}
 		{0E2733F4-7385-4BB8-9FB3-6CA7DCAFA89F} = {E6DB0B15-B768-4153-82DD-CDE317CD4A85}
+		{80E1547E-7D14-4565-BCDD-6E21C5CA9A9D} = {43B8F426-4783-4228-9069-057A2A92AE41}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {01D907A8-3561-444F-97AA-43C51F5D8B5F}

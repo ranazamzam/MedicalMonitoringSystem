@@ -30,8 +30,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let event of filteredGeneratedEvents | paginate: {id: 'generatedEventsPaging', itemsPerPage: 2, currentPage: p }">
-        <td>{{event.eventId}}</td>
+        <td>{{event.eventReferansNo}}</td>
         <td>{{event.patientId}}</td>
+        <td>{{event.patientName}}</td>
         <td>{{event.doctorId}}</td>
         <td>{{event.eventDate}}</td>
         <td>{{event.eventType}}</td>

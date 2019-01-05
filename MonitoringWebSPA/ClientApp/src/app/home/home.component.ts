@@ -83,9 +83,9 @@ export class HomeComponent implements OnInit {
     if (data != null && data != undefined) {
 
       this.selectedDoctorId = data.doctorId;
+      this.selectedPatientId = data.patientId;
 
       if (data.patientId != undefined && data.patientId != -1) {
-        this.selectedPatientId = data.patientId;
         this.filteredGeneratedEvents = this.generatedEvents.filter(event => event.patientId == data.patientId);
       }
 

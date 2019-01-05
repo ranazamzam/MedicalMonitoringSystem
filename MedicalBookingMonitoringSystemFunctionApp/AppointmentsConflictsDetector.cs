@@ -23,7 +23,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
             var partitionFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "BookingAppointmentEvent");
             var IsConflictedFilter = TableQuery.GenerateFilterConditionForBool("IsConflicted", QueryComparisons.Equal, true);
             var IsConflictShownFilter = TableQuery.GenerateFilterConditionForBool("IsConflictShown", QueryComparisons.Equal, false);
-            var dateFilter = TableQuery.GenerateFilterConditionForDate("EventDate", QueryComparisons.LessThanOrEqual, dateTimeOffset);
+            var dateFilter = TableQuery.GenerateFilterConditionForDate("EventCreationDate", QueryComparisons.LessThanOrEqual, dateTimeOffset);
 
             var filter = TableQuery.CombineFilters(
                            dateFilter,
@@ -43,7 +43,6 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                 log.LogInformation($"{conflictedEvent.PartitionKey}\t{conflictedEvent.RowKey}\t{conflictedEvent.Timestamp}\t{conflictedEvent.EventId}");
 
                 var originalAppointmentEvent = appointmentEventsWithConflicts.Find(x => x.EventId == conflictedEvent.OriginalEventId);
-
 
                 if (originalAppointmentEvent != null)
                 {

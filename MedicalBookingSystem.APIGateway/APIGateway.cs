@@ -17,6 +17,7 @@ using Ocelot.Middleware;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 using System.Text;
+using System.Net.Http;
 
 namespace MedicalBookingSystem.APIGateway
 {
@@ -61,10 +62,9 @@ namespace MedicalBookingSystem.APIGateway
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
-                                            .AddSingleton<StatelessServiceContext>(serviceContext))
+                                             .AddSingleton<HttpClient>(new HttpClient())
+                                             .AddSingleton<StatelessServiceContext>(serviceContext))
                                     .UseContentRoot(Directory.GetCurrentDirectory())
-                                    
-
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
                                                             .ConfigureAppConfiguration((hostingContext, config) =>
