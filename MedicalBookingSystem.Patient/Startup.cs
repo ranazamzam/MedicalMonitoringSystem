@@ -14,6 +14,11 @@ using Patient.Infrastructure.Repositories;
 using Patient.Services.Interfaces;
 using Patient.Services.Services;
 using Patient.Domain.Models;
+using Patient.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using MedicalBookingSystem.Patient.Config;
+using Patient.Infrastructure.UnitOfWorks;
+using Microsoft.AspNetCore.Http;
 
 namespace MedicalBookingSystem.Patient
 {
@@ -41,8 +46,12 @@ namespace MedicalBookingSystem.Patient
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddOptions();
             services.AddTransient<IPatientService, PatientService>();
-            services.AddTransient<IRepository<PatientEntity>, InMemoryRepository>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            //services.AddTransient<IRepository<PatientEntity>, InMemoryRepository>();
 
+            var connectionString = PatientServiceConfiguration.DefaultConnectiontring;
+            services.AddDbContext<PatientDbContext>(options => options.UseSqlServer(connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +64,10 @@ namespace MedicalBookingSystem.Patient
 
             app.UseCors("CorsPolicy");
             app.UseMvc();
+
+            // Initialize the DB if not already initialized
+            DbInitializer.Initialize(app.ApplicationServices);
+
         }
     }
 }

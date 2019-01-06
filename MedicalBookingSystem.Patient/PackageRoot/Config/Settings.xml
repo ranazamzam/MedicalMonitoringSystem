@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <!-- Add your custom configuration sections and parameters here -->
-  <!--
-  <Section Name="MyConfigSection">
-    <Parameter Name="MyParameter" Value="Value1" />
+  <Section Name="ConnectionStrings">
+    <Parameter Name="DefaultConnection" Value="Server=patientdb.database.windows.net;Initial Catalog=PatientServiceDB;Persist Security Info=False;User ID=rana;Password=Alten123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" />
+    <!--Server=(localdb)\\MSSQLLocalDB;Database=PatientServiceDB;User Id=sa1;Password=sa1;MultipleActiveResultSets=true-->
+    <!--"Server=(localdb)\\mssqllocaldb;Database=AcerPlatformV2;Trusted_Connection=True;MultipleActiveResultSets=true-->
+    <!--Server=95.128.57.89;Database=CGTICDBTEST;user id=CGTICDBTESTUser;password=3x8skKmyY2m43xAd;MultipleActiveResultSets=true-->
   </Section>
-  -->
 </Settings>

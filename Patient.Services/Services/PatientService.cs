@@ -21,9 +21,9 @@ namespace Patient.Services.Services
         //    _unitOfWork = unitOfWork;
         //}
 
-        public PatientService(IRepository<PatientEntity> patientRepository)
+        public PatientService(IUnitOfWork unitOfWork)
         {
-            _patientRepository = patientRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public void Dispose()
@@ -33,24 +33,40 @@ namespace Patient.Services.Services
 
         public List<PatientDTO> GetAllPatients()
         {
-            var patients = _patientRepository.GetAll;
+            //var patients = _patientRepository.GetAll;
+            //var patientsDTO = patients.Select(x => new PatientDTO()
+            //{
+            //    Id = x.Id,
+            //    Name = x.Name
+            //}).ToList();
+
+            //patientsDTO.Insert(0, new PatientDTO { Id = -1, Name = "All" });
+
+            //return patientsDTO;
+
+            var patients = _unitOfWork.Repository<PatientEntity>().GetAllNoTracking.ToList();
             var patientsDTO = patients.Select(x => new PatientDTO()
             {
                 Id = x.Id,
                 Name = x.Name
             }).ToList();
 
-            patientsDTO.Insert(0, new PatientDTO { Id = -1, Name = "All" });
+            if (patientsDTO.Any())
+                patientsDTO.Insert(0, new PatientDTO { Id = -1, Name = "All" });
 
             return patientsDTO;
-            // return _unitOfWork.Repository<Domain.Models.Patient>().GetAllNoTracking.ToList();
         }
 
-        public Task<PatientEntity> GetPatientById(int id)
+        public Task<PatientEntity> GetPatientByIdAsync(int id)
         {
-            return _patientRepository.GetByIdAsync(id);
+            // return _patientRepository.GetByIdAsync(id);
 
-            //return Task.FromResult(_unitOfWork.Repository<Domain.Models.Patient>().GetById(id));
+            return _unitOfWork.Repository<PatientEntity>().GetByIdAsync(id);
+        }
+
+        public PatientEntity GetPatientById(int id)
+        {
+            return _unitOfWork.Repository<PatientEntity>().GetById(id);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Patient.Domain.DataTransferObjects;
 using Patient.Domain.Models;
 using Patient.Services.Interfaces;
@@ -15,12 +16,12 @@ namespace MedicalBookingSystem.Patient.Controllers
     public class PatientController : Controller
     {
         private readonly IPatientService _patientService;
+        private readonly ILogger _logger;
 
-        public PatientController(IPatientService patientService)
+        public PatientController(IPatientService patientService, ILogger<PatientController> logger)
         {
             _patientService = patientService;
-            // _logger = logger;
-            //_config = configOptions.Value;
+             _logger = logger;
         }
 
         #region  Actions
@@ -30,19 +31,27 @@ namespace MedicalBookingSystem.Patient.Controllers
         [ProducesResponseType(typeof(PatientEntity), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetPatientById(int id)
         {
-            if (id <= 0)
+            try
             {
-                return BadRequest();
+                if (id <= 0)
+                {
+                    return BadRequest();
+                }
+
+                var patient = await _patientService.GetPatientByIdAsync(id);
+                _logger.LogInformation("patient found");
+                if (patient != null)
+                {
+                    return Ok(patient);
+                }
+
+                return NotFound();
             }
-
-            var patient = await _patientService.GetPatientById(id);
-
-            if (patient != null)
+            catch (Exception ex)
             {
-                return Ok(patient);
+                _logger.LogCritical(ex.Message);
+                throw new Exception("An exception occured.");
             }
-
-            return NotFound();
         }
 
         [HttpGet]
@@ -51,14 +60,22 @@ namespace MedicalBookingSystem.Patient.Controllers
         [ProducesResponseType(typeof(List<PatientDTO>), (int)HttpStatusCode.OK)]
         public IActionResult GetAllPatients()
         {
-            var patients = _patientService.GetAllPatients();
-
-            if (patients.Any())
+            try
             {
-                return Ok(patients);
-            }
+                var patients = _patientService.GetAllPatients();
 
-            return NotFound();
+                if (patients.Any())
+                {
+                    return Ok(patients);
+                }
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex.Message);
+                throw new Exception("An exception occured.");
+            }
         }
         #endregion
     }

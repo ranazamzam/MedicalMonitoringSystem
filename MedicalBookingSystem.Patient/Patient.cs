@@ -11,6 +11,7 @@ using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Data;
+using Microsoft.Extensions.Logging;
 
 namespace MedicalBookingSystem.Patient
 {
@@ -41,6 +42,13 @@ namespace MedicalBookingSystem.Patient
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton<StatelessServiceContext>(serviceContext))
+                                    .ConfigureLogging((hostingContext, logging) =>
+                                    {
+                                        logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                                        logging.AddConsole();
+                                        logging.AddDebug();
+                                        logging.AddEventSourceLogger();
+                                    })
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseStartup<Startup>()
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)

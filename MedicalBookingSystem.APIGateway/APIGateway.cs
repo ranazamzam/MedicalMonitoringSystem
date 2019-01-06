@@ -67,7 +67,7 @@ namespace MedicalBookingSystem.APIGateway
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
-                                                            .ConfigureAppConfiguration((hostingContext, config) =>
+                                    .ConfigureAppConfiguration((hostingContext, config) =>
                                     {
                                         config
                                             .SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
