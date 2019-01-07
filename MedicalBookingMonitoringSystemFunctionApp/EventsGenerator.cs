@@ -87,7 +87,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                     {
                         var originalAppointment = conflictedEvents.Results[0];
                         generatedEvent.IsConflicted = true;
-                        generatedEvent.IsConflictShown = true;
+                        generatedEvent.IsConflictShown = false;
                         generatedEvent.OriginalEventId = originalAppointment.EventId;
                     }
                 }

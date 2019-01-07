@@ -1,11 +1,12 @@
 <p>
   The data below displays the conflicted appointments,
   It dislays the original appointment along with the apppointments that conflicted with it
+  Click on the + button for more details about the apppointments conficted with the original appointment
 </p>
 <div class="row show-grid">
-  <div *ngFor="let originalEvent of appointmentEventsWithConflicts | paginate: {id: 'conflictedEventsPaging', itemsPerPage: 2, currentPage: p };let i = index" class="col-md-9">
+  <div *ngFor="let originalEvent of appointmentEventsWithConflicts | paginate: {id: 'conflictedEventsPaging', itemsPerPage: 5, currentPage: p };let i = index" class="col-md-9">
+    <button (click)="toggle[i] = !toggle[i]">+</button>
     Original Appointment Id :{{originalEvent.EventId}}
-    <button (click)="toggle[i] = !toggle[i]">Check Conflicted Appointments</button>
     <div *ngIf="originalEvent.ConflictedEvents && toggle[i]">
       <div class="row show-grid">
         <div class="col-md-6">
@@ -20,7 +21,7 @@
           {{conflictedEvent.EventId}}
         </div>
         <div class="col-md-6">
-          {{conflictedEvent.EventDate}}
+          {{conflictedEvent.EventDate | date:'short'}}
         </div>
       </div>
     </div>

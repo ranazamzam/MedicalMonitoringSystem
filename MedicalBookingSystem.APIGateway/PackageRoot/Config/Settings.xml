@@ -3,5 +3,6 @@
   <!-- Add your custom configuration sections and parameters here -->
   <Section Name="ServicesReverseProxy">
     <Parameter Name="ReverseProxyUri" Value="http://localhost:19081" />
+    <Parameter Name="EventsAzureFunction" Value="http://localhost:7071/api/EventsRetreiver/" />
   </Section>
 </Settings>

@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { AzureSignalRService } from '../azure-signal-r.service';
 import { EventDisplayService } from '../event-display.service';
 import { indexDebugNode } from '@angular/core/src/debug/debug_node';
+import { Config } from "../Config";
 
 @Component({
   selector: 'app-home',
@@ -33,7 +34,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
 
     this._hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:19081/MedicalBookingSystem/MedicalBookingSystem.APIGateway/eventsGenerator')
+      .withUrl(Config.Urls.APIGatewaySignalR)
       .configureLogging(signalR.LogLevel.Information)
       .build();
 
@@ -41,7 +42,6 @@ export class HomeComponent implements OnInit {
 
     this._hubConnection.on('ReceiveNewEvent', (data: any) => {
       debugger;
-      //const received = `Received: ${data}`;
       this.generatedEvents.push(data);
       this.applyFilter({ patientId: this.selectedPatientId, doctorId: this.selectedDoctorId });
     });
@@ -72,6 +72,20 @@ export class HomeComponent implements OnInit {
       this.patients = patients;
     });
 
+    this._eventsDisplayervice.getDoctors().subscribe((doctors) => {
+      debugger;
+      this.doctors = doctors;
+    });
+
+    this._eventsDisplayervice.getEvents().subscribe((events) => {
+      debugger;
+
+      events.forEach(event => {
+        this.generatedEvents.push(event);
+      });
+
+      this.applyFilter({ patientId: this.selectedPatientId, doctorId: this.selectedDoctorId });
+    });
   }
 
   applyFilter(data: any) {
@@ -89,10 +103,9 @@ export class HomeComponent implements OnInit {
         this.filteredGeneratedEvents = this.generatedEvents.filter(event => event.patientId == data.patientId);
       }
 
-      //if (data.patientId != undefined && data.patientId != -1) {
-      //  this.filteredGeneratedEvents = this.generatedEvents.filter(event => event.patientId == data.patientId);
-      //}
+      if (data.doctorId != undefined && data.doctorId != -1) {
+        this.filteredGeneratedEvents = this.generatedEvents.filter(event => event.doctorId == data.doctorId);
+      }
     }
   }
-
 }

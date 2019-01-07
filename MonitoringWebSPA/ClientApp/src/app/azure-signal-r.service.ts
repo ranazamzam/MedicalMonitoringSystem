@@ -7,12 +7,13 @@ import { SignalRConnectionInfo } from "./shared/models/signalr-connection-info.m
 import { map } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { AppointmentEvent } from "./shared/models/appointment-event.model";
+import { Config } from "./Config";
 
 @Injectable()
 export class AzureSignalRService {
 
   private readonly _http: HttpClient;
-  private readonly _baseUrl: string = "http://localhost:7071/api/";
+  private readonly _baseUrl: string = Config.Urls.AzureSignalrUrl;
   private hubConnection: HubConnection;
   appointmentEventsWithConflicts: Subject<AppointmentEvent[]> = new Subject();
 
@@ -45,10 +46,6 @@ export class AzureSignalRService {
       this.hubConnection.on('appointmentConflictDetected', (data: AppointmentEvent[]) => {
         debugger;
         this.appointmentEventsWithConflicts.next(data);
-        //data.forEach(function (item) {
-        //  this.appointmentEventsWithConflicts.next(item);
-        //});
-
       });
     });
   }

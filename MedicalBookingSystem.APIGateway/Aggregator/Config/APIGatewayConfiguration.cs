@@ -9,6 +9,7 @@ namespace MedicalBookingSystem.APIGateway.Aggregator.Config
     public static class APIGatewayConfiguration
     {
         public static string ReverseProxyUri;
+        public static string EventsAzureFunctionUrl;
 
         static APIGatewayConfiguration()
         {
@@ -32,6 +33,11 @@ namespace MedicalBookingSystem.APIGateway.Aggregator.Config
             if (param.Contains("ReverseProxyUri"))
             {
                 ReverseProxyUri = param["ReverseProxyUri"].Value;
+            }
+
+            if (param.Contains("EventsAzureFunction"))
+            {
+                EventsAzureFunctionUrl = param["EventsAzureFunction"].Value;
             }
         }
     }

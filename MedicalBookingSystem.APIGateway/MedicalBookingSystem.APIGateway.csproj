@@ -20,6 +20,7 @@
     <PackageReference Include="Microsoft.Owin.Cors" Version="4.0.0" />
     <PackageReference Include="Microsoft.Owin.Hosting" Version="4.0.0" />
     <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.2.187" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
     <PackageReference Include="Ocelot" Version="12.0.1" />
   </ItemGroup>
 

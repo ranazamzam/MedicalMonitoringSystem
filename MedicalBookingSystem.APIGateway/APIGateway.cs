@@ -17,6 +17,7 @@ using Ocelot.Middleware;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using System.Net.Http;
 
 namespace MedicalBookingSystem.APIGateway
@@ -64,6 +65,13 @@ namespace MedicalBookingSystem.APIGateway
                                         services => services
                                              .AddSingleton<HttpClient>(new HttpClient())
                                              .AddSingleton<StatelessServiceContext>(serviceContext))
+                                    .ConfigureLogging((hostingContext, logging) =>
+                                    {
+                                        logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                                        logging.AddConsole();
+                                        logging.AddDebug();
+                                        logging.AddEventSourceLogger();
+                                    })
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)

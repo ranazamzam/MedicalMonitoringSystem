@@ -17,6 +17,15 @@
       ],
       "DownstreamScheme": "http",
       "ServiceName": "MedicalBookingSystem/MedicalBookingSystem.Patient"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Doctor/Doctors",
+      "UpstreamPathTemplate": "/Doctors",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamScheme": "http",
+      "ServiceName": "MedicalBookingSystem/MedicalBookingSystem.Doctor"
     }
   ],
   "GlobalConfiguration": {

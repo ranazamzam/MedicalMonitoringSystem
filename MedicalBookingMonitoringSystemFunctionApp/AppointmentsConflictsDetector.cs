@@ -56,6 +56,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                         appointmentEventsWithConflicts.Add(new AppointmentEvent()
                         {
                             EventId = conflictedEvent.OriginalEventId,
+                            EventReferansNo = conflictedEvent.OriginalEventId.ToString().Substring(0, conflictedEvent.OriginalEventId.ToString().IndexOf("-")),
                             ConflictedEvents = new List<Event>() { conflictedEvent }
                         });
                     }
