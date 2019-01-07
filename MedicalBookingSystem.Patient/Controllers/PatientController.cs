@@ -21,7 +21,7 @@ namespace MedicalBookingSystem.Patient.Controllers
         public PatientController(IPatientService patientService, ILogger<PatientController> logger)
         {
             _patientService = patientService;
-             _logger = logger;
+            _logger = logger;
         }
 
         #region  Actions
@@ -29,7 +29,7 @@ namespace MedicalBookingSystem.Patient.Controllers
         [Route("{id}")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(PatientEntity), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetPatientById(int id)
+        public IActionResult GetPatientById(int id)
         {
             try
             {
@@ -38,8 +38,8 @@ namespace MedicalBookingSystem.Patient.Controllers
                     return BadRequest();
                 }
 
-                var patient = await _patientService.GetPatientByIdAsync(id);
-                _logger.LogInformation("patient found");
+                var patient = _patientService.GetPatientById(id);
+
                 if (patient != null)
                 {
                     return Ok(patient);

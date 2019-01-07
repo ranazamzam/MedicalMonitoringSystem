@@ -48,7 +48,7 @@ namespace Tests
         /// Should return all patients if 
         /// </summary>
         [Test]
-        public void GetAllPatients_ThereIsPatients_ShouldReturnListOfPatients()
+        public void GetAllPatients_ThereIsPatients_ShouldReturnOkAndListOfPatients()
         {
             // Arrange
             _patientServiceMock.Setup(p => p.GetAllPatients()).Returns(_patients);
@@ -67,63 +67,121 @@ namespace Tests
             Assert.IsNotNull(returnedPatientDTOs);
             Assert.IsInstanceOf(typeof(List<PatientDTO>), returnedPatientDTOs);
             Assert.AreEqual(returnedPatientDTOs.Any(), true);
-            
+
             var comparer = new PatientDTOComparer();
             CollectionAssert.AreEqual(returnedPatientDTOs.OrderBy(product => product, comparer),
                                      _patients.OrderBy(product => product, comparer), comparer);
 
             Assert.AreEqual(2, returnedPatientDTOs.Count);
-            
+
         }
 
         [Test]
-        public void GetAllPatients_IfThereIsNoPatients_ShouldReturnEmptyList()
+        public void GetAllPatients_IfThereIsNoPatients_ShouldReturnNotFoundAndEmptyList()
         {
-            //_patients.Clear();
-            //_mockPatientRepository.Setup(p => p.GetAllNoTracking).Returns(_patients.AsQueryable());
-            //_mockUnitOfWork.Setup(s => s.Repository<PatientEntity>()).Returns(_mockPatientRepository.Object);
-            //_patientService = new PatientService(_mockUnitOfWork.Object);
+            // Arrange
+            _patients.Clear();
+            _patientServiceMock.Setup(p => p.GetAllPatients()).Returns(_patients);
+            _patientsController = new PatientController(_patientServiceMock.Object, _loggerMock.Object);
 
-            //var patients = _patientService.GetAllPatients();
+            // Act
+            var response = _patientsController.GetAllPatients();
 
-            //Assert.AreEqual(0, patients.Count);
+            var notFoundResult = response as NotFoundResult;
+
+            // Assert
+            Assert.IsNotNull(notFoundResult);
+            Assert.AreEqual(404, notFoundResult.StatusCode);
         }
 
         [Test]
-        public void GetPatientById_PatientIdExists_ShouldReturnTheRightPatientItem()
+        public void GetAllPatients_IfThrowException_ShouldLogAndReturnExceptionMessage()
         {
-            //_mockPatientRepository.Setup(p => p.GetByIdAsync(It.IsAny<object[]>()))
-            //                      .ReturnsAsync(new Func<object[], PatientEntity>(id => _patients.Find(p => p.Id == int.Parse(id[0].ToString()))));
-            //_mockUnitOfWork.Setup(s => s.Repository<PatientEntity>()).Returns(_mockPatientRepository.Object);
-            //_patientService = new PatientService(_mockUnitOfWork.Object);
+            // Arrange
+            _patientServiceMock.Setup(p => p.GetAllPatients()).Throws<Exception>();
+            _patientsController = new PatientController(_patientServiceMock.Object, _loggerMock.Object);
 
-            //var patient = _patientService.GetPatientByIdAsync(1).GetAwaiter().GetResult();
-
-            //var patientFromTestList = _patients.Find(a => a.Id == 1);
-
-            //Assert.AreEqual(patientFromTestList.Id, patient.Id);
-            //Assert.AreEqual(patientFromTestList.Name, patient.Name);
+            // Act & Assert
+            var ex = Assert.Throws<Exception>(() => _patientsController.GetAllPatients());
+            Assert.That(ex.Message, Is.EqualTo("An exception occured."));
         }
 
         [Test]
-        public void GetPatientById_PatientIdNotFound_ShouldReturnNull()
+        public void GetPatientById_ThereIsPatient_ShouldReturnOkAndExpectedPatient()
         {
-            //_mockPatientRepository.Setup(p => p.GetByIdAsync(It.IsAny<int>()))
-            //                      .ReturnsAsync(new Func<object[], PatientEntity>(id => _patients.Find(p => p.Id == int.Parse(id[0].ToString()))));
-            //_mockUnitOfWork.Setup(s => s.Repository<PatientEntity>()).Returns(_mockPatientRepository.Object);
-            //_patientService = new PatientService(_mockUnitOfWork.Object);
+            // Arrange
+            _patientServiceMock.Setup(p => p.GetPatientById(It.IsAny<int>()))
+                                 .Returns(new Func<int, PatientDTO>(id => _patients.Find(p => p.Id == id)));
+            _patientsController = new PatientController(_patientServiceMock.Object, _loggerMock.Object);
 
-            //var patient = _patientService.GetPatientByIdAsync(0).GetAwaiter().GetResult();
+            // Act
+            var response = _patientsController.GetPatientById(1);
 
-            //Assert.Null(patient);
+            var okResult = response as OkObjectResult;
+
+            // Assert
+            Assert.IsNotNull(okResult);
+            Assert.AreEqual(200, okResult.StatusCode);
+
+            var returnedPatientDTO = okResult.Value as PatientDTO;
+            Assert.IsNotNull(returnedPatientDTO);
+            Assert.IsInstanceOf(typeof(PatientDTO), returnedPatientDTO);
+
+            var patientFromTestList = _patients.Find(a => a.Id == 1);
+            Assert.AreEqual(patientFromTestList.Id, returnedPatientDTO.Id);
+            Assert.AreEqual(patientFromTestList.Name, returnedPatientDTO.Name);
+
+        }
+
+        [Test]
+        public void GetPatientById_PatientNotFound_ShouldReturnNotFoundAndNullPatient()
+        {
+            // Arrange
+            _patientServiceMock.Setup(p => p.GetPatientById(It.IsAny<int>()))
+                               .Returns(new Func<int, PatientDTO>(id => _patients.Find(p => p.Id == id)));
+            _patientsController = new PatientController(_patientServiceMock.Object, _loggerMock.Object);
+
+            // Act
+            var response = _patientsController.GetPatientById(10);
+
+            var notFoundResult = response as NotFoundResult;
+
+            // Assert
+            Assert.IsNotNull(notFoundResult);
+            Assert.AreEqual(404, notFoundResult.StatusCode);
+        }
+
+        [Test]
+        public void GetPatientById_InvalidId_ShouldReturnBadRequest()
+        {
+            // Arrange
+            _patientsController = new PatientController(_patientServiceMock.Object, _loggerMock.Object);
+
+            // Act
+            var response = _patientsController.GetPatientById(-1);
+
+            var badRequestResult = response as BadRequestResult;
+
+            // Assert
+            Assert.IsNotNull(badRequestResult);
+            Assert.AreEqual(400, badRequestResult.StatusCode);
+        }
+
+        [Test]
+        public void GetPatientById_IfThrowException_ShouldLogAndReturnExceptionMessage()
+        {
+            // Arrange
+            _patientServiceMock.Setup(p => p.GetPatientById(It.IsAny<int>())).Throws<Exception>();
+            _patientsController = new PatientController(_patientServiceMock.Object, _loggerMock.Object);
+
+            // Act & Assert
+            var ex = Assert.Throws<Exception>(() => _patientsController.GetPatientById(1));
+            Assert.That(ex.Message, Is.EqualTo("An exception occured."));
         }
         #endregion
 
         #region tear down after every test 
 
-        /// <summary>
-        /// Tears down each test data
-        /// </summary>
         [TearDown]
         public void DisposeTest()
         {
@@ -142,7 +200,7 @@ namespace Tests
             _loggerMock = null;
         }
         #endregion
-        
+
         #region Helpers and Data Initializer
         private List<PatientDTO> SetUpPatients()
         {
@@ -151,12 +209,12 @@ namespace Tests
                 new PatientDTO
                 {
                     Id=1,
-                    Name="Henrik Karlsson"
+                    Name="Henrik Karlsson Test Patient"
                 },
                 new PatientDTO
                 {
                     Id=2,
-                    Name="Erik Henriksson"
+                    Name="Erik Henriksson Test Patient"
                 },
             };
         }

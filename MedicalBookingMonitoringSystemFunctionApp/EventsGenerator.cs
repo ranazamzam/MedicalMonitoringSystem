@@ -19,81 +19,87 @@ namespace MedicalBookingMonitoringSystemFunctionApp
             [Table("EventsTable")] CloudTable currentEvents,
             [Table("EventsTable")] ICollector<Event> newEvents)
         {
-            var patientsIds = Helper.GetPatients();
-            var doctorsIds = Helper.GetDoctors();
-            var eventTypes = Helper.GetEventTypes();
-
-            // Generate a random event for each patient
-            Random randomNumberGenerator = new Random();
-            var randomEventTypeIndex = randomNumberGenerator.Next(eventTypes.Count);
-            var eventType = eventTypes[randomEventTypeIndex];
-
-            int? doctorId = null;
-
-            if (eventType.Contains("Appointment"))
+            try
             {
-                var randomDoctorIdIndex = randomNumberGenerator.Next(doctorsIds.Count);
-                doctorId = doctorsIds[randomDoctorIdIndex];
-            }
+                var patientsIds = Helper.GetPatients();
+                var doctorsIds = Helper.GetDoctors();
+                var eventTypes = Helper.GetEventTypes();
 
-            var randomPatientIdIndex = randomNumberGenerator.Next(patientsIds.Count);
-            var patientId = patientsIds[randomPatientIdIndex];
+                // Generate a random event for each patient
+                Random randomNumberGenerator = new Random();
+                var randomEventTypeIndex = randomNumberGenerator.Next(eventTypes.Count);
+                var eventType = eventTypes[randomEventTypeIndex];
 
-            // Genrate Random Date
-            var eventDate = Helper.GenerateRandomDate();
-            var partitionKey = eventType.Contains("Booking Appointment") ? "BookingAppointmentEvent" : "GeneralEvent";
+                int? doctorId = null;
 
-            var rowId = Guid.NewGuid();
-            var generatedEvent = new Event
-            {
-                RowKey = rowId.ToString(),
-                PartitionKey = partitionKey,
-                EventId = rowId,
-                EventReferansNo = rowId.ToString().Substring(0, rowId.ToString().IndexOf("-")),
-                PatientId = patientId,
-                DoctorId = doctorId,
-                EventDate = eventDate,
-                EventCreationDate = DateTime.Now,
-                EventType = eventType,
-            };
-
-            // In case the generate event type is Booking Appointment , we will query the events table to check if there is any appointment conflicting with the new one
-            // I am assuming that every appointment will have a range of 30 minutes, so if any new appointment is booked within this range 
-            // it shoud be marked as a conflicted one, for example if we have an appointment at 17 , any appointment between 
-            // 17 and 17:30 will be marked as a conflicted one 
-
-            if (eventType.Contains("Booking Appointment"))
-            {
-                DateTimeOffset eventStartDateTimeOffset = new DateTimeOffset(eventDate);
-                DateTimeOffset eventEndDateTimeOffset = new DateTimeOffset(eventDate).AddMinutes(-30);
-                var partitionFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "BookingAppointmentEvent");
-                var doctorFilter = TableQuery.GenerateFilterConditionForInt("DoctorId", QueryComparisons.Equal, doctorId.Value);
-                var isConflictedFilter = TableQuery.GenerateFilterConditionForBool("IsConflicted", QueryComparisons.Equal, false);
-                var dateLessThanFilter = TableQuery.GenerateFilterConditionForDate("EventDate", QueryComparisons.LessThanOrEqual, eventStartDateTimeOffset);
-                var dateGreaterThanFilter = TableQuery.GenerateFilterConditionForDate("EventDate", QueryComparisons.GreaterThanOrEqual, eventEndDateTimeOffset);
-
-                var filter = TableQuery.CombineFilters(dateLessThanFilter, TableOperators.And,
-                                                          TableQuery.CombineFilters(
-                                                               TableQuery.CombineFilters(partitionFilter, TableOperators.And, doctorFilter),
-                                                               TableOperators.And, isConflictedFilter));
-                var finalFilter = TableQuery.CombineFilters(filter, TableOperators.And, dateGreaterThanFilter);
-
-                TableQuery<Event> rangeQuery = new TableQuery<Event>().Where(finalFilter);
-                var conflictedEvents = await currentEvents.ExecuteQuerySegmentedAsync(rangeQuery, null);
-
-                if (conflictedEvents.Results.Count > 0)
+                if (eventType.Contains("Appointment"))
                 {
-                    var originalAppointment = conflictedEvents.Results[0];
-                    generatedEvent.IsConflicted = true;
-                    generatedEvent.IsConflictShown = true;
-                    generatedEvent.OriginalEventId = originalAppointment.EventId;
+                    var randomDoctorIdIndex = randomNumberGenerator.Next(doctorsIds.Count);
+                    doctorId = doctorsIds[randomDoctorIdIndex];
                 }
+
+                var randomPatientIdIndex = randomNumberGenerator.Next(patientsIds.Count);
+                var patientId = patientsIds[randomPatientIdIndex];
+
+                // Genrate Random Date
+                var eventDate = Helper.GenerateRandomDate();
+                var partitionKey = eventType.Contains("Booking Appointment") ? "BookingAppointmentEvent" : "GeneralEvent";
+
+                var rowId = Guid.NewGuid();
+                var generatedEvent = new Event
+                {
+                    RowKey = rowId.ToString(),
+                    PartitionKey = partitionKey,
+                    EventId = rowId,
+                    EventReferansNo = rowId.ToString().Substring(0, rowId.ToString().IndexOf("-")),
+                    PatientId = patientId,
+                    DoctorId = doctorId,
+                    EventDate = eventDate,
+                    EventCreationDate = DateTime.Now,
+                    EventType = eventType,
+                };
+
+                // In case the generate event type is Booking Appointment , we will query the events table to check if there is any appointment conflicting with the new one
+                // I am assuming that every appointment will have a range of 30 minutes, so if any new appointment is booked within this range 
+                // it shoud be marked as a conflicted one, for example if we have an appointment at 17 , any appointment between 
+                // 17 and 17:30 will be marked as a conflicted one 
+
+                if (eventType.Contains("Booking Appointment"))
+                {
+                    DateTimeOffset eventStartDateTimeOffset = new DateTimeOffset(eventDate);
+                    DateTimeOffset eventEndDateTimeOffset = new DateTimeOffset(eventDate).AddMinutes(-30);
+                    var partitionFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "BookingAppointmentEvent");
+                    var doctorFilter = TableQuery.GenerateFilterConditionForInt("DoctorId", QueryComparisons.Equal, doctorId.Value);
+                    var isConflictedFilter = TableQuery.GenerateFilterConditionForBool("IsConflicted", QueryComparisons.Equal, false);
+                    var dateLessThanFilter = TableQuery.GenerateFilterConditionForDate("EventDate", QueryComparisons.LessThanOrEqual, eventStartDateTimeOffset);
+                    var dateGreaterThanFilter = TableQuery.GenerateFilterConditionForDate("EventDate", QueryComparisons.GreaterThanOrEqual, eventEndDateTimeOffset);
+
+                    var filter = TableQuery.CombineFilters(dateLessThanFilter, TableOperators.And,
+                                                              TableQuery.CombineFilters(
+                                                                   TableQuery.CombineFilters(partitionFilter, TableOperators.And, doctorFilter),
+                                                                   TableOperators.And, isConflictedFilter));
+                    var finalFilter = TableQuery.CombineFilters(filter, TableOperators.And, dateGreaterThanFilter);
+
+                    TableQuery<Event> rangeQuery = new TableQuery<Event>().Where(finalFilter);
+                    var conflictedEvents = await currentEvents.ExecuteQuerySegmentedAsync(rangeQuery, null);
+
+                    if (conflictedEvents.Results.Count > 0)
+                    {
+                        var originalAppointment = conflictedEvents.Results[0];
+                        generatedEvent.IsConflicted = true;
+                        generatedEvent.IsConflictShown = true;
+                        generatedEvent.OriginalEventId = originalAppointment.EventId;
+                    }
+                }
+
+                // Publish event to queue and save it to table storage
+                eventQueueItem.Add(generatedEvent);
+                newEvents.Add(generatedEvent);
             }
-
-            // Publish event to queue and save it to table storage
-            eventQueueItem.Add(generatedEvent);
-            newEvents.Add(generatedEvent);
-
+            catch (Exception ex)
+            {
+                log.LogInformation($"Event Generator Timer trigger function executed at: {DateTime.Now} exception:{ex.Message}");
+            }
             #region commented
             //var rowId = Guid.NewGuid();
             //var generatedEvent = new Event

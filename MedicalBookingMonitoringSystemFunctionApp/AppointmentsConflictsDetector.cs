@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -17,55 +18,63 @@ namespace MedicalBookingMonitoringSystemFunctionApp
             [Table("EventsTable")] CloudTable currentEvents,
             [SignalR(HubName = "broadcastConflicts")] IAsyncCollector<SignalRMessage> signalRMessages, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-
-            DateTimeOffset dateTimeOffset = DateTimeOffset.Now.AddMinutes(-5);
-            var partitionFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "BookingAppointmentEvent");
-            var IsConflictedFilter = TableQuery.GenerateFilterConditionForBool("IsConflicted", QueryComparisons.Equal, true);
-            var IsConflictShownFilter = TableQuery.GenerateFilterConditionForBool("IsConflictShown", QueryComparisons.Equal, false);
-            var dateFilter = TableQuery.GenerateFilterConditionForDate("EventCreationDate", QueryComparisons.LessThanOrEqual, dateTimeOffset);
-
-            var filter = TableQuery.CombineFilters(
-                           dateFilter,
-                           TableOperators.And,
-                           TableQuery.CombineFilters(
-                                TableQuery.CombineFilters(partitionFilter, TableOperators.And, IsConflictedFilter),
-                                TableOperators.And, IsConflictShownFilter));
-
-            TableQuery<Event> rangeQuery = new TableQuery<Event>().Where(filter);
-
-            List<AppointmentEvent> appointmentEventsWithConflicts = new List<AppointmentEvent>();
-
-            var conflictedEvents = await currentEvents.ExecuteQuerySegmentedAsync(rangeQuery, null);
-
-            foreach (var conflictedEvent in conflictedEvents)
+            try
             {
-                log.LogInformation($"{conflictedEvent.PartitionKey}\t{conflictedEvent.RowKey}\t{conflictedEvent.Timestamp}\t{conflictedEvent.EventId}");
+                log.LogInformation($"Appointments Conflicts Detector Timer trigger function executed at: {DateTime.Now}");
 
-                var originalAppointmentEvent = appointmentEventsWithConflicts.Find(x => x.EventId == conflictedEvent.OriginalEventId);
+                DateTimeOffset dateTimeOffset = DateTimeOffset.Now.AddMinutes(-5);
+                var partitionFilter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "BookingAppointmentEvent");
+                var IsConflictedFilter = TableQuery.GenerateFilterConditionForBool("IsConflicted", QueryComparisons.Equal, true);
+                var IsConflictShownFilter = TableQuery.GenerateFilterConditionForBool("IsConflictShown", QueryComparisons.Equal, false);
+                var dateFilter = TableQuery.GenerateFilterConditionForDate("EventCreationDate", QueryComparisons.LessThanOrEqual, dateTimeOffset);
 
-                if (originalAppointmentEvent != null)
+                var filter = TableQuery.CombineFilters(
+                               dateFilter,
+                               TableOperators.And,
+                               TableQuery.CombineFilters(
+                                    TableQuery.CombineFilters(partitionFilter, TableOperators.And, IsConflictedFilter),
+                                    TableOperators.And, IsConflictShownFilter));
+
+                TableQuery<Event> rangeQuery = new TableQuery<Event>().Where(filter);
+
+                List<AppointmentEvent> appointmentEventsWithConflicts = new List<AppointmentEvent>();
+
+                var conflictedEvents = await currentEvents.ExecuteQuerySegmentedAsync(rangeQuery, null);
+
+                foreach (var conflictedEvent in conflictedEvents)
                 {
-                    originalAppointmentEvent.ConflictedEvents.Add(conflictedEvent);
-                }
-                else
-                {
-                    appointmentEventsWithConflicts.Add(new AppointmentEvent()
+                    log.LogInformation($"{conflictedEvent.PartitionKey}\t{conflictedEvent.RowKey}\t{conflictedEvent.Timestamp}\t{conflictedEvent.EventId}");
+
+                    var originalAppointmentEvent = appointmentEventsWithConflicts.Find(x => x.EventId == conflictedEvent.OriginalEventId);
+
+                    if (originalAppointmentEvent != null)
                     {
-                        EventId = conflictedEvent.OriginalEventId,
-                        ConflictedEvents = new List<Event>() { conflictedEvent }
-                    });
+                        originalAppointmentEvent.ConflictedEvents.Add(conflictedEvent);
+                    }
+                    else
+                    {
+                        appointmentEventsWithConflicts.Add(new AppointmentEvent()
+                        {
+                            EventId = conflictedEvent.OriginalEventId,
+                            ConflictedEvents = new List<Event>() { conflictedEvent }
+                        });
+                    }
+
+                    conflictedEvent.IsConflictShown = true;
+                    await currentEvents.ExecuteAsync(TableOperation.Replace(conflictedEvent));
                 }
 
-                conflictedEvent.IsConflictShown = true;
-                await currentEvents.ExecuteAsync(TableOperation.Replace(conflictedEvent));
+                if (appointmentEventsWithConflicts.Any())
+                    await signalRMessages.AddAsync(new SignalRMessage
+                    {
+                        Target = "appointmentConflictDetected",
+                        Arguments = new[] { appointmentEventsWithConflicts }
+                    });
             }
-
-            await signalRMessages.AddAsync(new SignalRMessage
+            catch (Exception ex)
             {
-                Target = "appointmentConflictDetected",
-                Arguments = new[] { appointmentEventsWithConflicts }
-            });
+                log.LogInformation($"AppointmentsConflictsDetector Timer trigger function executed at: {DateTime.Now} exception:{ex.Message}");
+            }
         }
     }
 }

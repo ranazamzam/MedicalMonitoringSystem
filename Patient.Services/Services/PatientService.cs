@@ -57,16 +57,18 @@ namespace Patient.Services.Services
             return patientsDTO;
         }
 
-        public Task<PatientEntity> GetPatientByIdAsync(int id)
+        public PatientDTO GetPatientById(int id)
         {
-            // return _patientRepository.GetByIdAsync(id);
+            var patient =  _unitOfWork.Repository<PatientEntity>().GetById(id);
 
-            return _unitOfWork.Repository<PatientEntity>().GetByIdAsync(id);
-        }
+            if (patient != null)
+                return new PatientDTO()
+                {
+                    Id = patient.Id,
+                    Name = patient.Name
+                };
 
-        public PatientEntity GetPatientById(int id)
-        {
-            return _unitOfWork.Repository<PatientEntity>().GetById(id);
+            return null;
         }
     }
 }

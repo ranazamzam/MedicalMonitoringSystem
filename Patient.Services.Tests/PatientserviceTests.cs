@@ -86,28 +86,28 @@ namespace Tests
         [Test]
         public void GetPatientById_PatientIdExists_ShouldReturnTheRightPatientItem()
         {
-            _mockPatientRepository.Setup(p => p.GetByIdAsync(It.IsAny<object[]>()))
-                                  .ReturnsAsync(new Func<object[], PatientEntity>(id => _patients.Find(p => p.Id ==int.Parse(id[0].ToString()))));
+            _mockPatientRepository.Setup(p => p.GetById(It.IsAny<object[]>()))
+                                               .Returns(new Func<object[], PatientEntity>(id => _patients.Find(p => p.Id ==int.Parse(id[0].ToString()))));
             _mockUnitOfWork.Setup(s => s.Repository<PatientEntity>()).Returns(_mockPatientRepository.Object);
             _patientService = new PatientService(_mockUnitOfWork.Object);
 
-            var patient = _patientService.GetPatientByIdAsync(1).GetAwaiter().GetResult();
+            var patient = _patientService.GetPatientById(1);
 
             var patientFromTestList = _patients.Find(a => a.Id == 1);
-
-            Assert.AreEqual(patientFromTestList.Id, patient.Id);
-            Assert.AreEqual(patientFromTestList.Name, patient.Name);
+            var patientEntity = new PatientEntity { Id = patient.Id, Name = patient.Name };
+            Assert.AreEqual(patientFromTestList.Id, patientEntity.Id);
+            Assert.AreEqual(patientFromTestList.Name, patientEntity.Name);
         }
 
         [Test]
         public void GetPatientById_PatientIdNotFound_ShouldReturnNull()
         {
-            _mockPatientRepository.Setup(p => p.GetByIdAsync(It.IsAny<int>()))
-                                  .ReturnsAsync(new Func<object[], PatientEntity>(id => _patients.Find(p => p.Id == int.Parse(id[0].ToString()))));
+            _mockPatientRepository.Setup(p => p.GetById(It.IsAny<int>()))
+                                  .Returns(new Func<object[], PatientEntity>(id => _patients.Find(p => p.Id == int.Parse(id[0].ToString()))));
             _mockUnitOfWork.Setup(s => s.Repository<PatientEntity>()).Returns(_mockPatientRepository.Object);
             _patientService = new PatientService(_mockUnitOfWork.Object);
 
-            var patient = _patientService.GetPatientByIdAsync(0).GetAwaiter().GetResult();
+            var patient = _patientService.GetPatientById(0);
 
             Assert.Null(patient);
         }
@@ -172,12 +172,12 @@ namespace Tests
                 new PatientEntity
                 {
                     Id=1,
-                    Name="Henrik Karlsson"
+                    Name="Henrik Karlsson Test Patient"
                 },
                 new PatientEntity
                 {
                     Id=2,
-                    Name="Erik Henriksson"
+                    Name="Erik Henriksson Test Patient"
                 },
             };
         }
