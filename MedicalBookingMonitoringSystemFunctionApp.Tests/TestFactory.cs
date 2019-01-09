@@ -58,7 +58,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp.Tests
 
         public static CloudTable GetClientForTable(string tableName)
         {
-            var account = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=medicalstorageaccount;AccountKey=fATUBv0fzNkHfZ17sm7pZrzeXztWk1KpGoFQ3XCoCbcRIMC4Y8VUOB5k/7waiaQu7unc/6HdeTcFXpJ5KbqKCQ==;EndpointSuffix=core.windows.net");
+            var account = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=medicalsystemstorage;AccountKey=UkTkUoK39cAnQZJbzcueGYgvrX+mxD8m8wZz7KwuC28PuGosBwYVYgCfTSwfMmiPJ14iuIN1cGD/qelkkv0PqA==;EndpointSuffix=core.windows.net");
 
             var tableClient = account.CreateCloudTableClient();
             var table = tableClient.GetTableReference(tableName);
