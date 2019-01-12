@@ -6,7 +6,7 @@
 <div class="row show-grid">
   <div *ngFor="let originalEvent of appointmentEventsWithConflicts | paginate: {id: 'conflictedEventsPaging', itemsPerPage: 5, currentPage: p };let i = index" class="col-md-9">
     <button (click)="toggle[i] = !toggle[i]">+</button>
-    Original Appointment Id :{{originalEvent.EventId}}
+    Original Appointment Reference No / DoctorName :{{originalEvent.EventReferenceNo}}/{{originalEvent.DoctorName}}
     <div *ngIf="originalEvent.ConflictedEvents && toggle[i]">
       <div class="row show-grid">
         <div class="col-md-6">
@@ -17,10 +17,13 @@
         </div>
       </div>
       <div *ngFor="let conflictedEvent of originalEvent.ConflictedEvents" class="row show-grid">
-        <div class="col-md-6">
-          {{conflictedEvent.EventId}}
+        <div class="col-md-3">
+          {{conflictedEvent.EventReferenceNo}}
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
+          {{conflictedEvent.PatientName}}
+        </div>
+        <div class="col-md-3">
           {{conflictedEvent.EventDate | date:'short'}}
         </div>
       </div>

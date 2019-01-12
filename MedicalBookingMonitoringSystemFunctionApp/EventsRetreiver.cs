@@ -78,12 +78,13 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                     events.Add(new Event()
                     {
                         EventId = item.EventId,
-                        EventReferansNo = item.EventReferansNo,
+                        EventReferenceNo = item.EventReferenceNo,
                         PatientId = item.PatientId,
                         DoctorId = item.DoctorId,
                         EventDate = item.EventDate,
-                        EventType= item.EventType,
-                        IsConflictShown = item.IsConflictShown
+                        EventType = item.EventType,
+                        IsConflictShown = item.IsConflictShown,
+                        OriginalEventReferenceNo = item.OriginalEventId != Guid.Empty ? item.OriginalEventId.ToString().Substring(0, item.OriginalEventId.ToString().IndexOf("-")) : string.Empty,
                     });
                 }
 

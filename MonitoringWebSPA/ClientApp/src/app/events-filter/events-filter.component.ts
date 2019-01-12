@@ -28,4 +28,9 @@ export class EventsFilterComponent implements OnInit {
     this.onFilterValueChanged.emit({ patientId: this.selectedPatientId, doctorId: this.selectedDoctorId });
   }
 
+  doctorFilterChanged(patient: any) {
+    this.selectedDoctorId = patient.id;
+    this.onFilterValueChanged.emit({ patientId: this.selectedPatientId, doctorId: this.selectedDoctorId });
+  }
+
 }

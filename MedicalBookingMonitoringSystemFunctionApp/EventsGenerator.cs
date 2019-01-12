@@ -51,7 +51,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                     RowKey = rowId.ToString(),
                     PartitionKey = partitionKey,
                     EventId = rowId,
-                    EventReferansNo = rowId.ToString().Substring(0, rowId.ToString().IndexOf("-")),
+                    EventReferenceNo = rowId.ToString().Substring(0, rowId.ToString().IndexOf("-")),
                     PatientId = patientId,
                     DoctorId = doctorId,
                     EventDate = eventDate,
@@ -235,7 +235,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
     {
         public Guid EventId { get; set; }
 
-        public string EventReferansNo { get; set; }
+        public string EventReferenceNo { get; set; }
 
         public int PatientId { get; set; }
 
@@ -253,6 +253,8 @@ namespace MedicalBookingMonitoringSystemFunctionApp
 
         // In case of conflict, this property will contain the Id of the original event
         public Guid OriginalEventId { get; set; }
+
+        public string OriginalEventReferenceNo { get; set; }
     }
 
     public class AppointmentEvent : Event

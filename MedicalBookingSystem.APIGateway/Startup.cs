@@ -141,7 +141,7 @@ namespace MedicalBookingSystem.APIGateway
     {
         public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = "Endpoint=sb://medicalbookingmonitorservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=9j5ZjW9Y/BnphDca2o1nno23PMEhDy+nWJbTtuOz+CU=";
+            var connectionString = "Endpoint=sb://medicalsystemservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=NZRk50slK3s9vtZF4qZLsEhjCO0EWfKzOgYirBfP474=";
             var queueName = "eventsqueue";
 
             services.AddSingleton<IServiceBusPersisterConnection>(sp =>

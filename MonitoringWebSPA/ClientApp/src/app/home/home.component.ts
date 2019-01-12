@@ -57,10 +57,12 @@ export class HomeComponent implements OnInit {
 
           if (indexOfGeneratedEvent != -1) {
             that.generatedEvents[indexOfGeneratedEvent].isConflictShown = true;
+            that.generatedEvents[indexOfGeneratedEvent].originalEventReferenceNo = item.EventReferenceNo;
           }
 
           if (indexOfFilteredGeneratedEvent != -1) {
             that.filteredGeneratedEvents[indexOfFilteredGeneratedEvent].isConflictShown = true;
+            that.filteredGeneratedEvents[indexOfFilteredGeneratedEvent].originalEventReferenceNo = item.EventReferenceNo;
           }
 
         })

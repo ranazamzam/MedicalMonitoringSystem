@@ -4,5 +4,8 @@ export class Event {
   DoctorId: number;
   EventDate: Date;
   EventType: number;
+  EventReferenceNo: string
+  PatientName: string;
+  DoctorName: string;
 }
 

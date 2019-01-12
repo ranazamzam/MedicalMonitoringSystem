@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { HubConnection } from '@aspnet/signalr';
 import * as signalR from '@aspnet/signalr';
@@ -15,59 +15,44 @@ import { AzureSignalRService } from '../azure-signal-r.service';
 })
 export class ConflictDisplayComponent implements OnInit {
 
+  @Input() generatedEvents;
+
   private readonly _signalRService: AzureSignalRService;
-  private readonly _http: HttpClient;
-  private readonly _baseUrl: string = "http://localhost:7071/api/";
-  private hubConnection: HubConnection;
   appointmentEventsWithConflicts: AppointmentEvent[] = [];
   p: number = 1;
   toggle: any = {};
 
-  constructor(http: HttpClient, signalRService: AzureSignalRService)
-  {
+  constructor(http: HttpClient, signalRService: AzureSignalRService) {
     this._signalRService = signalRService;
-    this._http = http;
     this.toggle = this.appointmentEventsWithConflicts.map(i => false);
   }
 
-  private getConnectionInfo(): Observable<SignalRConnectionInfo> {
-    let requestUrl = `${this._baseUrl}negotiate`;
-    return this._http.get<SignalRConnectionInfo>(requestUrl);
-  }
-
   ngOnInit() {
-    //this.getConnectionInfo().subscribe(info => {
 
-    //  info.accessToken = info.accessToken;
-    //  info.url = info.url;
-
-    //  let options = {
-    //    accessTokenFactory: () => info.accessToken
-    //  };
-
-    //  this.hubConnection = new signalR.HubConnectionBuilder()
-    //    .withUrl(info.url, options)
-    //    .configureLogging(signalR.LogLevel.Information)
-    //    .build();
-
-    //  this.hubConnection.start().catch(err => console.error(err.toString()));
-
-    //  this.hubConnection.on('appointmentConflictDetected', (data: AppointmentEvent[]) => {
-    //    debugger;
-    //    this.appointmentEventsWithConflicts= this.appointmentEventsWithConflicts.concat(data);
-    //    // loop on the incoming conflicted events list and group it by the original event reference number
-    //    //data.forEach(function (item) {
-
-    //    //  this.appointmentEvents[item.eventId] = this.appointmentEvents[item.eventId] || [];
-    //    //  this.appointmentEvents[item.eventId].conflictedEvents.push({ item });
-    //    //});
-
-    //  });
-
- // });
+    let that = this;
     //this._signalRService.init();
     this._signalRService.appointmentEventsWithConflicts.subscribe(data => {
       debugger;
+      data.forEach(function (item) {
+
+        const indexOfOriginalGeneratedEvent = that.generatedEvents.findIndex(x => x.eventId === item.EventId);
+
+        if (indexOfOriginalGeneratedEvent != -1) {
+          item.DoctorName = that.generatedEvents[indexOfOriginalGeneratedEvent].doctorName;
+          item.EventDate = that.generatedEvents[indexOfOriginalGeneratedEvent].eventDate;
+        }
+
+        item.ConflictedEvents.forEach(conflictedEvent => {
+          const indexOfConflictedGeneratedEvent = that.generatedEvents.findIndex(x => x.eventId === conflictedEvent.EventId);
+
+          if (indexOfConflictedGeneratedEvent != -1) {
+            conflictedEvent.PatientName = that.generatedEvents[indexOfConflictedGeneratedEvent].doctorName;
+            conflictedEvent.DoctorName = that.generatedEvents[indexOfConflictedGeneratedEvent].doctorName;
+          }
+
+        })
+      });
+
       this.appointmentEventsWithConflicts = this.appointmentEventsWithConflicts.concat(data);
     });
   }
