@@ -160,7 +160,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
             {
                 randomMonthMax = randomMonthMin;
                 randomHourMin = 10;
-                randomHourMax = 12;
+                randomHourMax = 11;
                 randomDayMin = 4;
             }
 

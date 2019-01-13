@@ -33,20 +33,20 @@ namespace MedicalBookingSystem.APIGateway
                 var eventsList = await _eventService.GetEvents();
 
                 // Get patient name and doctor name from doctor and patient services for each event
-                foreach (var @event in eventsList)
+                if (eventsList != null && eventsList.Any())
                 {
-                    var patientData = await _patientService.GetByIdAsync(@event.PatientId);
-                    @event.PatientName = patientData != null ? patientData.Name : string.Empty;
-
-                    if (@event.DoctorId.HasValue)
+                    foreach (var @event in eventsList)
                     {
-                        var doctorData = await _doctorService.GetByIdAsync(@event.DoctorId.Value);
-                        @event.DoctorName = doctorData != null ? doctorData.Name : string.Empty;
-                    }
-                }
+                        var patientData = await _patientService.GetByIdAsync(@event.PatientId);
+                        @event.PatientName = patientData != null ? patientData.Name : string.Empty;
 
-                if (eventsList.Any())
-                {
+                        if (@event.DoctorId.HasValue)
+                        {
+                            var doctorData = await _doctorService.GetByIdAsync(@event.DoctorId.Value);
+                            @event.DoctorName = doctorData != null ? doctorData.Name : string.Empty;
+                        }
+                    }
+
                     return Ok(eventsList);
                 }
 
