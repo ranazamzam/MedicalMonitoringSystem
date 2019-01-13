@@ -1,6 +1,6 @@
 ﻿using MedicalBookingSystem.APIGateway.Aggregator.Interfaces;
+using MedicalBookingSystem.APIGateway.Aggregator.SignalRHub;
 using Microsoft.AspNetCore.SignalR;
-using SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;

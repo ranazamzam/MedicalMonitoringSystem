@@ -1,29 +1,33 @@
 <p>
-  The data below displays the conflicted appointments,
-  It dislays the original appointment along with the apppointments that conflicted with it
-  Click on the + button for more details about the apppointments conficted with the original appointment
+  <b>
+    The grid below dislays the original appointment along with the apppointments that conflicted with it
+    Click on the + button for more details about the apppointments conficting with the original appointment
+  </b>
 </p>
 <div class="row show-grid">
   <div *ngFor="let originalEvent of appointmentEventsWithConflicts | paginate: {id: 'conflictedEventsPaging', itemsPerPage: 5, currentPage: p };let i = index" class="col-md-9">
     <button (click)="toggle[i] = !toggle[i]">+</button>
-    Original Appointment Reference No / DoctorName :{{originalEvent.EventReferenceNo}}/{{originalEvent.DoctorName}}
+    Original Appointment Refer. No / DoctorName / Date :{{originalEvent.EventReferenceNo}} / {{originalEvent.DoctorName}} / {{originalEvent.EventDate | date:'short'}}
     <div *ngIf="originalEvent.ConflictedEvents && toggle[i]">
       <div class="row show-grid">
-        <div class="col-md-6">
-          Appointment Id
+        <div class="col-md-4">
+          Appointment Refer. No
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+          Patient Name
+        </div>
+        <div class="col-md-4">
           Appointment Date
         </div>
       </div>
       <div *ngFor="let conflictedEvent of originalEvent.ConflictedEvents" class="row show-grid">
-        <div class="col-md-3">
+        <div class="col-md-4">
           {{conflictedEvent.EventReferenceNo}}
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           {{conflictedEvent.PatientName}}
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           {{conflictedEvent.EventDate | date:'short'}}
         </div>
       </div>
@@ -31,21 +35,8 @@
   </div>
 </div>
 
+<div *ngIf=" appointmentEventsWithConflicts !== null && appointmentEventsWithConflicts.length == 0">
+  <span>No Data Found</span>
+</div>
 
-<!--<table class="table table-striped">
-  <thead>
-    <tr>
-      <th></th>
-      <th>Appointment Id</th>
-      <th>Appointment Date</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let originalEvent of appointmentEventsWithConflicts">
-      <td>{{originalEvent.EventId}}</td>
-    <tr>
-    <tr></tr>
-  </tbody>
-</table>-->
-
-<pagination-controls id="conflictedEventsPaging" (pageChange)="p = $event"></pagination-controls>
+<pagination-controls id="conflictedEventsPaging" (pageChange)="p = $event" autoHide="true"></pagination-controls>

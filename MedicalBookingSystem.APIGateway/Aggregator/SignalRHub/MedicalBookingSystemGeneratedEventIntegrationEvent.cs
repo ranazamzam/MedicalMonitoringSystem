@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SignalR
+namespace MedicalBookingSystem.APIGateway.Aggregator.SignalRHub
 {
     public class MedicalBookingSystemGeneratedEventIntegrationEvent : IntegrationEvent
     {

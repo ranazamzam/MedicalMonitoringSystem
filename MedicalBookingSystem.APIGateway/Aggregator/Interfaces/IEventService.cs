@@ -1,4 +1,4 @@
-﻿using SignalR;
+﻿using MedicalBookingSystem.APIGateway.Aggregator.SignalRHub;
 using System;
 using System.Collections.Generic;
 using System.Linq;

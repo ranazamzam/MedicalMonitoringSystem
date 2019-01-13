@@ -11,10 +11,10 @@ export class EventsFilterComponent implements OnInit {
   @Input() doctors;
 
   private selectedPatientId: number = -1;
-  private selectedPatientName: string = '';
+  private selectedPatientName: string = 'All';
 
   private selectedDoctorId: number = -1;
-  private selectedDoctorName: string = '';
+  private selectedDoctorName: string = 'All';
 
   @Output() onFilterValueChanged: EventEmitter<any> = new EventEmitter<any>();
 
@@ -25,11 +25,13 @@ export class EventsFilterComponent implements OnInit {
 
   patientFilterChanged(patient: any) {
     this.selectedPatientId = patient.id;
+    this.selectedPatientName = patient.name;
     this.onFilterValueChanged.emit({ patientId: this.selectedPatientId, doctorId: this.selectedDoctorId });
   }
 
-  doctorFilterChanged(patient: any) {
-    this.selectedDoctorId = patient.id;
+  doctorFilterChanged(doctor: any) {
+    this.selectedDoctorId = doctor.id;
+    this.selectedDoctorName = doctor.name;
     this.onFilterValueChanged.emit({ patientId: this.selectedPatientId, doctorId: this.selectedDoctorId });
   }
 

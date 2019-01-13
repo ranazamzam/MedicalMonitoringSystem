@@ -15,10 +15,10 @@ using EventBus.GenericEventBus.Interfaces;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using EventBus.GenericEventBus;
-using SignalR;
 using MedicalBookingSystem.APIGateway.Aggregator.Interfaces;
 using MedicalBookingSystem.APIGateway.Aggregator;
 using MedicalBookingSystem.APIGateway.Aggregator.Services;
+using MedicalBookingSystem.APIGateway.Aggregator.SignalRHub;
 
 namespace MedicalBookingSystem.APIGateway
 {
@@ -28,13 +28,7 @@ namespace MedicalBookingSystem.APIGateway
         {
             Configuration = configuration;
         }
-
-        //public static void ConfigureApp(IAppBuilder app)
-        //{
-        //    ConfigureCors(app);
-        //    ConfigureSignalR(app);
-        //}
-
+        
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -92,49 +86,6 @@ namespace MedicalBookingSystem.APIGateway
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
             eventBus.Subscribe<MedicalBookingSystemGeneratedEventIntegrationEvent, MedicalBookingSystemGeneratedEventIntegrationEventHandler>();
         }
-
-        private static void ConfigureCors(IAppBuilder app)
-        {
-            //app.UseCors(CorsOptions.AllowAll);
-        }
-
-        private static void ConfigureSignalR()
-        {
-            //var configuration = new HubConfiguration { EnableDetailedErrors = true, EnableJavaScriptProxies = false };
-            //app.MapSignalR(configuration);
-
-            //var connectionString = "Endpoint=sb://medicalbookingservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=l547OSCiiTaAEby08Ma79cMLAGSflwNmcbAP8LCkwsg=";
-            //var queueName = "eventsqueue";
-
-            //var queueClient = new QueueClient(connectionString, queueName);
-
-            //var messageHandlerOptions = new MessageHandlerOptions(ExceptionReceivedHandler)
-            //{
-            //    // Maximum number of Concurrent calls to the callback `ProcessMessagesAsync`, set to 1 for simplicity.
-            //    // Set it according to how many messages the application wants to process in parallel.
-            //    MaxConcurrentCalls = 1,
-
-            //    // Indicates whether MessagePump should automatically complete the messages after returning from User Callback.
-            //    // False below indicates the Complete will be handled by the User Callback as in `ProcessMessagesAsync` below.
-            //    AutoComplete = false
-            //};
-
-            //// Register the function that will process messages
-            //// Register the function that will process messages
-            //queueClient.RegisterMessageHandler(async (message, token) =>
-            //{
-            //    // Process the message
-            //    var t = message.SystemProperties.SequenceNumber;
-            //    //  var customer = JsonConvert.DeserializeObject<Event>(Encoding.UTF8.GetString(message.Body));
-            //    //reList.Add(message.GetBody<string>());
-            //    // Complete the message so that it is not received again.
-            //    // This can be done only if the queueClient is opened in ReceiveMode.PeekLock mode.
-            //    await queueClient.CompleteAsync(message.SystemProperties.LockToken);
-            //}, messageHandlerOptions);
-
-
-        }
-
     }
 
     public static class CustomExtensionMethods

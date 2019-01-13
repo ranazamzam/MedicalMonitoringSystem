@@ -1,7 +1,7 @@
 ﻿using MedicalBookingSystem.APIGateway.Aggregator.Config;
 using MedicalBookingSystem.APIGateway.Aggregator.Interfaces;
+using MedicalBookingSystem.APIGateway.Aggregator.SignalRHub;
 using Newtonsoft.Json;
-using SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +34,6 @@ namespace MedicalBookingSystem.APIGateway.Aggregator.Services
                 events = JsonConvert.DeserializeObject<List<MedicalBookingSystemGeneratedEventIntegrationEvent>>(content);
             }
 
-            //var patient = !string.IsNullOrEmpty(data.) ? JsonConvert.DeserializeObject<PatientData>(data) : null;
             return events;
         }
     }

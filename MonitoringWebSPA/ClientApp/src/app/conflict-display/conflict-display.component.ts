@@ -46,8 +46,7 @@ export class ConflictDisplayComponent implements OnInit {
           const indexOfConflictedGeneratedEvent = that.generatedEvents.findIndex(x => x.eventId === conflictedEvent.EventId);
 
           if (indexOfConflictedGeneratedEvent != -1) {
-            conflictedEvent.PatientName = that.generatedEvents[indexOfConflictedGeneratedEvent].doctorName;
-            conflictedEvent.DoctorName = that.generatedEvents[indexOfConflictedGeneratedEvent].doctorName;
+            conflictedEvent.PatientName = that.generatedEvents[indexOfConflictedGeneratedEvent].patientName;
           }
 
         })

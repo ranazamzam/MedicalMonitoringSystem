@@ -2,20 +2,16 @@
   <div class="col-sm-1" style="margin-top:10px">Patients</div>
   <div class="col-sm-3" style="margin-bottom:10px">
     <div class="dropdown">
-      <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">Action <span class="caret"></span></button>
+      <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">{{selectedPatientName}} <span class="caret"></span></button>
       <ul class="dropdown-menu">
         <li *ngFor="let patient of patients" (click)="patientFilterChanged(patient)"><a href="#">{{patient.name}}</a></li>
-        <li><a href="#">Another action</a></li>
-        <li><a href="#">Something else here</a></li>
-        <li class="divider"></li>
-        <li><a href="#">Separated link</a></li>
       </ul>
     </div>
   </div>
   <div class="col-sm-1" style="margin-top:10px">Doctors</div>
   <div class="col-sm-3" style="margin-bottom:10px">
     <div class="dropdown">
-      <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">Action <span class="caret"></span></button>
+      <button data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">{{selectedDoctorName}} <span class="caret"></span></button>
       <ul class="dropdown-menu">
         <li *ngFor="let doctor of doctors" (click)="doctorFilterChanged(doctor)"><a href="#">{{doctor.name}}</a></li>
       </ul>

@@ -102,11 +102,11 @@ export class HomeComponent implements OnInit {
       this.selectedPatientId = data.patientId;
 
       if (data.patientId != undefined && data.patientId != -1) {
-        this.filteredGeneratedEvents = this.generatedEvents.filter(event => event.patientId == data.patientId);
+        this.filteredGeneratedEvents = this.filteredGeneratedEvents.filter(event => event.patientId == data.patientId);
       }
 
       if (data.doctorId != undefined && data.doctorId != -1) {
-        this.filteredGeneratedEvents = this.generatedEvents.filter(event => event.doctorId == data.doctorId);
+        this.filteredGeneratedEvents = this.filteredGeneratedEvents.filter(event => event.doctorId == data.doctorId);
       }
     }
   }

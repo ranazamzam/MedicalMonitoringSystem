@@ -1,8 +1,8 @@
 ﻿using EventBus.GenericEventBus.Interfaces;
 using MedicalBookingSystem.APIGateway.Aggregator.Interfaces;
+using MedicalBookingSystem.APIGateway.Aggregator.SignalRHub;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
-using SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EventBus\EventBus.csproj" />
-    <ProjectReference Include="..\SignalR\SignalR.csproj" />
   </ItemGroup>
 
 </Project>
