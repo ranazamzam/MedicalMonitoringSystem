@@ -11,10 +11,10 @@ export class EventsFilterComponent implements OnInit {
   @Input() doctors;
 
   private selectedPatientId: number = -1;
-  private selectedPatientName: string = 'All';
+  selectedPatientName: string = 'All';
 
   private selectedDoctorId: number = -1;
-  private selectedDoctorName: string = 'All';
+  selectedDoctorName: string = 'All';
 
   @Output() onFilterValueChanged: EventEmitter<any> = new EventEmitter<any>();
 

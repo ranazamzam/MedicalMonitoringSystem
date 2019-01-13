@@ -20,7 +20,7 @@
                                     AzureActiveDirectory="true"
                                     ServerCertThumbprint="0123456789012345678901234567890123456789" />
   -->
-  <ClusterConnectionParameters ConnectionEndpoint="medicalmonitoringtest.northeurope.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="7380BFB06DF563A5C360B789F654D4C922898C93" FindType="FindByThumbprint" FindValue="7380BFB06DF563A5C360B789F654D4C922898C93" StoreLocation="LocalMachine" StoreName="My" />
+  <ClusterConnectionParameters ConnectionEndpoint="medicalsystemmonitoring.northeurope.cloudapp.azure.com:19000" X509Credential="true" ServerCertThumbprint="19C8DAC5C7DB2738844170AE37A41EC52A8DF52A" FindType="FindByThumbprint" FindValue="19C8DAC5C7DB2738844170AE37A41EC52A8DF52A" StoreLocation="CurrentUser" StoreName="My" />
   <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
   <CopyPackageParameters CompressPackage="true" />
 </PublishProfile>

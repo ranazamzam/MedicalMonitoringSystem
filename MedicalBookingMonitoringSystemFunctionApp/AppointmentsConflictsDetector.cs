@@ -13,7 +13,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
 {
     public static class AppointmentsConflictsDetector
     {
-        [FunctionName("Function1")]
+        [FunctionName("AppointmentsConflictsDetector")]
         public static async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer,
             [Table("EventsTable")] CloudTable currentEvents,
             [SignalR(HubName = "broadcastConflicts")] IAsyncCollector<SignalRMessage> signalRMessages, ILogger log)
