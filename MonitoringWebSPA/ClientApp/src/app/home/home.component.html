@@ -19,7 +19,7 @@
         <td>{{event.eventReferenceNo}}</td>
         <td>{{event.patientName}}</td>
         <td>{{event.doctorName}}</td>
-        <td>{{event.eventDate | date:'short'}}</td>
+        <td>{{event.eventDateStr}}</td>
         <td>{{event.eventType}}</td>
         <td><span *ngIf="event.isConflictShown" style="color:red">Conflict with #{{event.originalEventReferenceNo}}</span></td>
       </tr>

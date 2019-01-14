@@ -39,7 +39,7 @@ export class ConflictDisplayComponent implements OnInit {
 
         if (indexOfOriginalGeneratedEvent != -1) {
           item.DoctorName = that.generatedEvents[indexOfOriginalGeneratedEvent].doctorName;
-          item.EventDate = that.generatedEvents[indexOfOriginalGeneratedEvent].eventDate;
+          item.EventDate = that.generatedEvents[indexOfOriginalGeneratedEvent].eventDateStr;
         }
 
         item.ConflictedEvents.forEach(conflictedEvent => {

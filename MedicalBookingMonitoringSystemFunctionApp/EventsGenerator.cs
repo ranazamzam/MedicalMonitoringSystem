@@ -55,6 +55,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                     PatientId = patientId,
                     DoctorId = doctorId,
                     EventDate = eventDate,
+                    EventDateStr = eventDate.ToString("g"),
                     EventCreationDate = DateTime.Now,
                     EventType = eventType,
                 };
@@ -231,6 +232,8 @@ namespace MedicalBookingMonitoringSystemFunctionApp
         public int? DoctorId { get; set; }
 
         public DateTime EventDate { get; set; }
+
+        public string EventDateStr { get; set; }
 
         public DateTime EventCreationDate { get; set; }
 

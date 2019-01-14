@@ -21,6 +21,8 @@ namespace MedicalBookingSystem.APIGateway.Aggregator.SignalRHub
 
         public DateTime EventDate { get; set; }
 
+        public string EventDateStr { get; set; }
+
         public string EventType { get; set; }
 
         public bool IsConflictShown { get; set; }

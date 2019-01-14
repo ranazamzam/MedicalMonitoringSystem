@@ -82,6 +82,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                         PatientId = item.PatientId,
                         DoctorId = item.DoctorId,
                         EventDate = item.EventDate,
+                        EventDateStr = item.EventDateStr,
                         EventType = item.EventType,
                         IsConflictShown = item.IsConflictShown,
                         OriginalEventReferenceNo = item.OriginalEventId != Guid.Empty ? item.OriginalEventId.ToString().Substring(0, item.OriginalEventId.ToString().IndexOf("-")) : string.Empty,
