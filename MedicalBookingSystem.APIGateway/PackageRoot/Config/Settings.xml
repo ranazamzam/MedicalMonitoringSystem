@@ -2,9 +2,9 @@
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <!-- Add your custom configuration sections and parameters here -->
   <Section Name="ServicesReverseProxy">
-    <!--<Parameter Name="ReverseProxyUri" Value="http://localhost:19081" />
-    <Parameter Name="EventsAzureFunction" Value="http://localhost:7071/api/EventsRetreiver/" />-->
-    <Parameter Name="ReverseProxyUri" Value="http://medicalsystemmonitoring.northeurope.cloudapp.azure.com:19081" />
-    <Parameter Name="EventsAzureFunction" Value="https://medicalbookingmonitoringsystemfunctionapp.azurewebsites.net/api/EventsRetreiver" />
+    <Parameter Name="ReverseProxyUri" Value="http://localhost:19081" />
+    <Parameter Name="EventsAzureFunction" Value="http://localhost:7071/api/EventsRetreiver/" />
+    <!--<Parameter Name="ReverseProxyUri" Value="http://medicalsystemmonitoring.northeurope.cloudapp.azure.com:19081" />
+    <Parameter Name="EventsAzureFunction" Value="https://medicalbookingmonitoringsystemfunctionapp.azurewebsites.net/api/EventsRetreiver" />-->
   </Section>
 </Settings>
