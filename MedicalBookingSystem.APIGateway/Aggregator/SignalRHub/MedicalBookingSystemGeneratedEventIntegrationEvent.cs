@@ -5,6 +5,9 @@ using System.Text;
 
 namespace MedicalBookingSystem.APIGateway.Aggregator.SignalRHub
 {
+    /// <summary>
+    /// Represents the properties of an event
+    /// </summary>
     public class MedicalBookingSystemGeneratedEventIntegrationEvent : IntegrationEvent
     {
         public Guid EventId { get; set; }
@@ -21,6 +24,9 @@ namespace MedicalBookingSystem.APIGateway.Aggregator.SignalRHub
 
         public DateTime EventDate { get; set; }
 
+        /// <summary>
+        /// Event Date as string for fixing time zone 's issue
+        /// </summary>
         public string EventDateStr { get; set; }
 
         public string EventType { get; set; }

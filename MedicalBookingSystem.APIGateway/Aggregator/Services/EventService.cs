@@ -20,6 +20,10 @@ namespace MedicalBookingSystem.APIGateway.Aggregator.Services
             _apiClient = apiClient;
         }
 
+        /// <summary>
+        /// Calls the event microservice API to get all saved events on page load
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<MedicalBookingSystemGeneratedEventIntegrationEvent>> GetEvents()
         {
            var eventsAzureFunctionUrl = new Uri($"{APIGatewayConfiguration.EventsAzureFunctionUrl}");

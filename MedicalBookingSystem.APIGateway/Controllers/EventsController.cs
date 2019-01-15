@@ -24,6 +24,10 @@ namespace MedicalBookingSystem.APIGateway
 
         }
 
+        /// <summary>
+        ///  Calls the event microservice API to get all saved events on page load
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("Events")]
         public async Task<IActionResult> GetAllEvents()
@@ -33,24 +37,24 @@ namespace MedicalBookingSystem.APIGateway
                 var eventsList = await _eventService.GetEvents();
 
                 // Get patient name and doctor name from doctor and patient services for each event
-                if (eventsList != null && eventsList.Any())
+                if (eventsList == null || eventsList.Any())
                 {
-                    foreach (var @event in eventsList)
-                    {
-                        var patientData = await _patientService.GetByIdAsync(@event.PatientId);
-                        @event.PatientName = patientData != null ? patientData.Name : string.Empty;
-
-                        if (@event.DoctorId.HasValue)
-                        {
-                            var doctorData = await _doctorService.GetByIdAsync(@event.DoctorId.Value);
-                            @event.DoctorName = doctorData != null ? doctorData.Name : string.Empty;
-                        }
-                    }
-
-                    return Ok(eventsList);
+                    return NotFound();
                 }
 
-                return NotFound();
+                foreach (var @event in eventsList)
+                {
+                    var patientData = await _patientService.GetByIdAsync(@event.PatientId);
+                    @event.PatientName = patientData != null ? patientData.Name : string.Empty;
+
+                    if (@event.DoctorId.HasValue)
+                    {
+                        var doctorData = await _doctorService.GetByIdAsync(@event.DoctorId.Value);
+                        @event.DoctorName = doctorData != null ? doctorData.Name : string.Empty;
+                    }
+                }
+
+                return Ok(eventsList);
             }
             catch (Exception ex)
             {

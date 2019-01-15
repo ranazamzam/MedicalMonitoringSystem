@@ -15,6 +15,15 @@ namespace MedicalBookingMonitoringSystemFunctionApp
 {
     public static class EventsRetreiver
     {
+        /// <summary>
+        /// This is function is used to get all already saved events and return them to the caller
+        /// It can receive PatientId or DoctorId as query string to filter events accoring to the sent query string 
+        /// If no query string is sent , all events are returned
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="currentEvents"></param>
+        /// <param name="log"></param>
+        /// <returns></returns>
         [FunctionName("EventsRetreiver")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
@@ -96,7 +105,7 @@ namespace MedicalBookingMonitoringSystemFunctionApp
             }
             catch (Exception ex)
             {
-                log.LogInformation($"AppointmentsConflictsDetector Timer trigger function executed at: {DateTime.Now} exception:{ex.Message}");
+                log.LogInformation($"EventsRetreiver trigger function executed at: {DateTime.Now} exception:{ex.Message}");
                 return new BadRequestResult();
             }
 

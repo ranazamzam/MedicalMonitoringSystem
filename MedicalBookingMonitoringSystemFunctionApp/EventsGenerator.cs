@@ -66,7 +66,6 @@ namespace MedicalBookingMonitoringSystemFunctionApp
                     
                     if (originalAppointment != null)
                     {
-                       // var originalAppointment = conflictedEvents.Results[0];
                         generatedEvent.IsConflicted = true;
                         generatedEvent.IsConflictShown = false;
                         generatedEvent.OriginalEventId = originalAppointment.EventId;

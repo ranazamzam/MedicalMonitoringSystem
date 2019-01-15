@@ -28,7 +28,7 @@ namespace MedicalBookingSystem.APIGateway
         {
             Configuration = configuration;
         }
-        
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -66,13 +66,11 @@ namespace MedicalBookingSystem.APIGateway
                 app.UseDeveloperExceptionPage();
             }
 
-
             app.UseCors("CorsPolicy");
             app.UseSignalR(routes =>
             {
                 routes.MapHub<EventsGeneratorHub>("/eventsGenerator");
             });
-
 
             app.UseMvc();
             //app.UseCors(CorsOptions.AllowAll);

@@ -14,8 +14,10 @@ namespace MedicalBookingSystem.APIGateway.Aggregator.Services
 {
     public class DoctorService : IDoctorService
     {
+        #region Properties
         private readonly HttpClient _apiClient;
         private readonly StatelessServiceContext _serviceContext;
+        #endregion
 
         public DoctorService(HttpClient apiClient, StatelessServiceContext serviceContext)
         {
@@ -23,6 +25,11 @@ namespace MedicalBookingSystem.APIGateway.Aggregator.Services
             _serviceContext = serviceContext;
         }
 
+        /// <summary>
+        /// Calls the doctor microservice API to get the name using the doctor Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<DoctorData> GetByIdAsync(int id)
         {
             var doctorServiceName = new Uri($"{_serviceContext.CodePackageActivationContext.ApplicationName}/MedicalBookingSystem.Doctor");

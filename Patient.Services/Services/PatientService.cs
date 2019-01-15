@@ -16,11 +16,6 @@ namespace Patient.Services.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<PatientEntity> _patientRepository;
 
-        //public PatientService(IUnitOfWork unitOfWork)
-        //{
-        //    _unitOfWork = unitOfWork;
-        //}
-
         public PatientService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -33,17 +28,6 @@ namespace Patient.Services.Services
 
         public List<PatientDTO> GetAllPatients()
         {
-            //var patients = _patientRepository.GetAll;
-            //var patientsDTO = patients.Select(x => new PatientDTO()
-            //{
-            //    Id = x.Id,
-            //    Name = x.Name
-            //}).ToList();
-
-            //patientsDTO.Insert(0, new PatientDTO { Id = -1, Name = "All" });
-
-            //return patientsDTO;
-
             var patients = _unitOfWork.Repository<PatientEntity>().GetAllNoTracking.ToList();
             var patientsDTO = patients.Select(x => new PatientDTO()
             {
@@ -59,7 +43,7 @@ namespace Patient.Services.Services
 
         public PatientDTO GetPatientById(int id)
         {
-            var patient =  _unitOfWork.Repository<PatientEntity>().GetById(id);
+            var patient = _unitOfWork.Repository<PatientEntity>().GetById(id);
 
             if (patient != null)
                 return new PatientDTO()

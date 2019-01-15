@@ -13,6 +13,13 @@ namespace MedicalBookingMonitoringSystemFunctionApp
 {
     public static class SignalRNegotiateFunction
     {
+        /// <summary>
+        /// returns Azure Signal R information (Url & AccessToken) to the caller for connecting to signalR hub
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="info"></param>
+        /// <param name="log"></param>
+        /// <returns></returns>
         [FunctionName("negotiate")]
         public static IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req,
